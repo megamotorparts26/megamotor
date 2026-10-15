@@ -21,7 +21,17 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 .fab{position:fixed;right:16px;bottom:16px;background:var(--p);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:20}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;align-items:center;justify-content:center;padding:12px}.modal.on{display:flex}.box{background:#fff;width:100%;max-width:600px;border-radius:14px;padding:20px;max-height:90vh;overflow-y:auto}
 .print{display:none}
-@media print{.no-print{display:none!important}.header,.tabs,.fab,.modal{display:none!important}body{background:#fff!important}.main{margin:0!important;padding:0!important;max-width:100%!important}#v-dash,#v-stok,#v-jual,#v-lap{display:none!important}#v-inv.panel,#v-sj.panel{display:none!important}#printInv,#printSj{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}}
+#printLaba{display:none}
+@media print{
+ .no-print{display:none!important}
+ .header,.tabs,.fab,.modal{display:none!important}
+  body{background:#fff!important}
+ .main{margin:0!important;padding:0!important;max-width:100%!important}
+  #v-dash,#v-stok,#v-jual,#v-inv,#v-sj,#v-lap{display:none!important}
+  body.print-inv #printInv{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}
+  body.print-sj #printSj{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}
+  body.print-laba #printLaba{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}
+}
 .inv-head{display:flex;justify-content:space-between;border-bottom:3px solid #111;padding-bottom:10px;margin-bottom:12px}
 .lbl{font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:4px;text-transform:uppercase}
 .saran-item{padding:8px 10px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:12px}.saran-item:hover{background:#f1f5f9}
@@ -51,7 +61,20 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 <div style="display:flex;justify-content:space-between;margin-top:50px;text-align:center;font-size:12px"><div style="width:30%"><div>Penerima,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b id="psCust2">Customer</b></div></div><div style="width:30%"><div>Pengirim / Sopir,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px">(............................ )</div></div><div style="width:30%"><div>Hormat Kami,</div><div style="height:90px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-style:italic">Tanda tangan & stempel</div><div style="border-top:1px solid #000;padding-top:6px"><b>MEGA MOTOR</b></div></div></div>
 </div>
 </div>
-<div id="v-lap" style="display:none"><div class="panel no-print"><div class="grid g3"><input id="lStart" type="date"><input id="lEnd" type="date"><button class="btn btn-p" onclick="rLap()">Tampilkan</button></div></div><div class="panel" id="lapCard"><div style="text-align:center;border-bottom:3px solid #111;padding-bottom:8px;margin-bottom:12px"><h2 style="margin:4px 0 0">MEGA MOTOR</h2><small>Jln. Cibadak No. 32</small><h3 style="margin:8px 0 0">Laporan Laba Rugi</h3><small id="lPeriode"></small></div><table><tbody><tr><td><b>Penjualan</b></td><td style="text-align:right" id="lrOmset">Rp 0</td></tr><tr><td>HPP</td><td style="text-align:right" id="lrHpp">Rp 0</td></tr><tr style="font-weight:800;background:#f8fafc;border-top:1px solid #000"><td>Laba Kotor</td><td style="text-align:right;color:#16a34a" id="lrKotor">Rp 0</td></tr><tr><td colspan="2" style="padding-top:12px"><b>Biaya</b></td></tr><tr><td>Sewa <input id="bSewa" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrSewa">Rp 0</td></tr><tr><td>Gaji <input id="bGaji" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrGaji">Rp 0</td></tr><tr><td>Listrik <input id="bListrik" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrListrik">Rp 0</td></tr><tr><td>Lain <input id="bLain" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrLain">Rp 0</td></tr><tr style="font-weight:800;background:#f1f5f9"><td>Total Biaya</td><td style="text-align:right" id="lrTotBiaya">Rp 0</td></tr><tr style="font-weight:800;font-size:18px;border-top:2px solid #111"><td>LABA BERSIH</td><td style="text-align:right;color:#16a34a" id="lrBersih">Rp 0</td></tr></tbody></table></div></div>
+<div id="v-lap" style="display:none">
+<div class="panel no-print"><div class="grid g3"><input id="lStart" type="date"><input id="lEnd" type="date"><button class="btn btn-p" onclick="rLap()">Tampilkan</button></div>
+<div style="margin-top:10px;display:flex;gap:8px">
+<button class="btn btn-g" style="width:100%" onclick="cetakLabaRugi()">🖨️ CETAK LAPORAN LABA RUGI</button>
+<button class="btn btn-l" style="width:100%" onclick="cetakLabaRugi()" >📄 Cetak PDF</button>
+</div>
+</div>
+<div class="panel" id="lapCard"><div style="text-align:center;border-bottom:3px solid #111;padding-bottom:8px;margin-bottom:12px"><h2 style="margin:4px 0 0">MEGA MOTOR</h2><small>Jln. Cibadak No. 32</small><h3 style="margin:8px 0 0">Laporan Laba Rugi</h3><small id="lPeriode"></small></div><table><tbody><tr><td><b>Penjualan</b></td><td style="text-align:right" id="lrOmset">Rp 0</td></tr><tr><td>HPP</td><td style="text-align:right" id="lrHpp">Rp 0</td></tr><tr style="font-weight:800;background:#f8fafc;border-top:1px solid #000"><td>Laba Kotor</td><td style="text-align:right;color:#16a34a" id="lrKotor">Rp 0</td></tr><tr><td colspan="2" style="padding-top:12px"><b>Biaya</b></td></tr><tr><td>Sewa <input id="bSewa" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrSewa">Rp 0</td></tr><tr><td>Gaji <input id="bGaji" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrGaji">Rp 0</td></tr><tr><td>Listrik <input id="bListrik" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrListrik">Rp 0</td></tr><tr><td>Lain <input id="bLain" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrLain">Rp 0</td></tr><tr style="font-weight:800;background:#f1f5f9"><td>Total Biaya</td><td style="text-align:right" id="lrTotBiaya">Rp 0</td></tr><tr style="font-weight:800;font-size:18px;border-top:2px solid #111"><td>LABA BERSIH</td><td style="text-align:right;color:#16a34a" id="lrBersih">Rp 0</td></tr></tbody></table>
+<div style="margin-top:12px;font-size:10px;color:#64748b;text-align:center;border-top:1px dashed #cbd5e1;padding-top:6px">Dicetak: <span id="tglCetakLap"></span> | MEGA MOTOR - Cibadak No.32</div>
+</div>
+</div>
+
+<div id="printLaba" class="print"></div>
+
 </div>
 <button class="fab no-print" onclick="openM()">+ Barang</button>
 <div class="modal" id="modal"><div class="box">
@@ -64,6 +87,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 </div></div>
 <div class="modal" id="modalReset"><div class="box"><h3 id="resetTitle" style="color:#dc2626">Konfirmasi Hapus</h3><p id="resetMsg">Yakin?</p><div class="grid g2"><button class="btn btn-l" onclick="closeReset()">Batal</button><button class="btn btn-p" style="background:#dc2626" onclick="doReset()">Ya, Hapus</button></div></div></div>
 <script>
+const SHEETS_API = "https://script.google.com/macros/s/AKfycbxP8ccO7G1uIWQQygq-EksU8S924LGhzGdjMeEFzARdRGb-fESgWU19FIC3vGynIlNIYg/exec";
 const DEF=[
 {k:"MM-001",n:"BATOK BELAKANG SUPRA X",b:12000,ja:12000,jb:12000,u:"PCS"},
 {k:"MM-002",n:"BATOK BELAKANG SUPRA X 125",b:11000,ja:11000,jb:11000,u:"PCS"},
@@ -78,12 +102,38 @@ if(!master){master=DEF.map(o=>({kode:o.k,nama:o.n,beli:o.b,jualA:o.ja,jualB:o.jb
 else{master=master.map(m=>({kode:m.kode||m.k||'MM-'+Math.random().toString(36).substr(2,4).toUpperCase(),satuan:m.satuan||"PCS",isi:m.isi||1,nama:m.nama,beli:m.beli,jualA:m.jualA,jualB:m.jualB}));}
 let stok=JSON.parse(localStorage.getItem('mega_kode_stok')||'null'); if(!stok){stok={}; master.forEach(b=>stok[b.kode]={s:0,nama:b.nama});}
 let jual=JSON.parse(localStorage.getItem('mega_kode_jual')||'[]'); let inv=JSON.parse(localStorage.getItem('mega_kode_inv')||'[]'); let sj=JSON.parse(localStorage.getItem('mega_kode_sj')||'[]'); let cart=[]; let resetType='';
-function save(){localStorage.setItem('mega_kode_master',JSON.stringify(master));localStorage.setItem('mega_kode_stok',JSON.stringify(stok));localStorage.setItem('mega_kode_jual',JSON.stringify(jual));localStorage.setItem('mega_kode_inv',JSON.stringify(inv));localStorage.setItem('mega_kode_sj',JSON.stringify(sj));}
+function save(){
+  localStorage.setItem('mega_kode_master',JSON.stringify(master));
+  localStorage.setItem('mega_kode_stok',JSON.stringify(stok));
+  localStorage.setItem('mega_kode_jual',JSON.stringify(jual));
+  localStorage.setItem('mega_kode_inv',JSON.stringify(inv));
+  localStorage.setItem('mega_kode_sj',JSON.stringify(sj));
+  // SYNC KE GOOGLE SHEETS - UPDATE DI SEMUA HP
+  fetch(SHEETS_API,{method:'POST',mode:'no-cors',body:JSON.stringify({type:'stok',stok:stok})});
+  fetch(SHEETS_API,{method:'POST',mode:'no-cors',body:JSON.stringify({type:'jual',jual:jual})});
+  fetch(SHEETS_API,{method:'POST',mode:'no-cors',body:JSON.stringify({type:'master',master:master})});
+  document.getElementById('syncStatus').innerText='● Online - Tersimpan di Sheets';
+}
+async function loadFromSheets(){
+  try{
+    let r=await fetch(SHEETS_API);
+    let d=await r.json();
+    if(d.master && d.master.length>0) master=d.master.map(m=>({kode:m.kode,nama:m.nama,beli:m.beli,jualA:m.jualA,jualB:m.jualB,satuan:m.satuan}));
+    if(d.stok) stok=d.stok;
+    if(d.jual) jual=d.jual;
+    localStorage.setItem('mega_kode_master',JSON.stringify(master));
+    rStok(); rDash();
+    document.getElementById('syncStatus').innerText='● Online - Google Sheets Terhubung';
+  }catch(e){}
+}
+loadFromSheets();
+setInterval(loadFromSheets,15000);
 function fmt(n){return "Rp "+(n||0).toLocaleString('id-ID')}
+function fmtTgl(iso){if(!iso) return ""; let parts=iso.split('-'); if(parts.length!==3) return iso; return parts[2]+'-'+parts[1]+'-'+parts[0];}
 function terbilang(n){const a=["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"]; if(n<12) return a[n]; if(n<20) return a[n-10]+" Belas"; if(n<100) return a[Math.floor(n/10)]+" Puluh "+a[n%10]; if(n<200) return "Seratus "+terbilang(n-100); if(n<1000) return a[Math.floor(n/100)]+" Ratus "+terbilang(n%100); if(n<2000) return "Seribu "+terbilang(n-1000); if(n<1000000) return terbilang(Math.floor(n/1000))+" Ribu "+terbilang(n%1000); return n.toString()}
 function genKode(){let num=master.length+1; mKode.value='MM-'+String(num).padStart(3,'0');}
 function go(t){['dash','stok','jual','inv','sj','lap'].forEach(k=>{document.getElementById('v-'+k).style.display=k==t?'block':'none'; let sb=document.getElementById('sb-'+k); if(sb) sb.classList.toggle('active',k==t);}); if(t=='stok') rStok(); if(t=='inv') rInv(); if(t=='sj') rSj(); if(t=='dash') rDash(); if(t=='lap') rLap(); if(t=='jual') initJual();}
-function rDash(){let jenis=master.length; let tot=0,nil=0; master.forEach(b=>{let s=stok[b.kode]?.s||0; tot+=s; nil+=s*b.beli;}); let bulan=jual.filter(x=>new Date(x.tgl).getMonth()==new Date().getMonth()); let om=bulan.reduce((a,b)=>a+b.total,0); let laba=bulan.reduce((a,b)=>a+b.laba,0); kJenis.innerText=jenis; kStok.innerText=tot+' items'; kNilai.innerText=fmt(nil); kOmset.innerText=fmt(om); document.getElementById('kTrans').innerText=bulan.length; document.getElementById('kLabaDash').innerText=fmt(laba); let k=document.getElementById('krit'); k.innerHTML=''; master.forEach(b=>{let s=stok[b.kode]?.s||0; if(s<10) k.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span><span class="badge b-kode">${b.kode}</span> ${b.nama} <span class="badge b-unit">${b.satuan}</span></span><span class="badge ${s==0?'b-bad':'b-warn'}">${s} ${b.satuan}</span></div>`}); if(!k.innerHTML) k.innerHTML='<div style="color:#16a34a">Semua stok aman ✅</div>'; let lj=document.getElementById('lastJual'); lj.innerHTML=''; jual.slice(0,5).forEach(j=>lj.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9"><span><b>${j.no}</b> - ${j.cust}</span><span><b>${fmt(j.total)}</b></span></div>`); if(!jual.length) lj.innerHTML="<div style='color:#64748b'>Belum ada transaksi</div>";}
+function rDash(){let jenis=master.length; let tot=0,nil=0; master.forEach(b=>{let s=stok[b.kode]?.s||0; tot+=s; nil+=s*b.beli;}); let bulan=jual.filter(x=>new Date(x.tgl).getMonth()==new Date().getMonth()); let om=bulan.reduce((a,b)=>a+b.total,0); let laba=bulan.reduce((a,b)=>a+b.laba,0); kJenis.innerText=jenis; kStok.innerText=tot+' items'; kNilai.innerText=fmt(nil); kOmset.innerText=fmt(om); document.getElementById('kTrans').innerText=bulan.length; document.getElementById('kLabaDash').innerText=fmt(laba); let k=document.getElementById('krit'); k.innerHTML=''; master.forEach(b=>{let s=stok[b.kode]?.s||0; if(s<10) k.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span><span class="badge b-kode">${b.kode}</span> ${b.nama} <span class="badge b-unit">${b.satuan}</span></span><span class="badge ${s==0?'b-bad':'b-warn'}">${s} ${b.satuan}</span></div>`}); if(!k.innerHTML) k.innerHTML='<div style="color:#16a34a">Semua stok aman ✅</div>'; let lj=document.getElementById('lastJual'); lj.innerHTML=''; jual.slice(0,5).forEach(j=>lj.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9"><span><b>${j.no}</b> - ${j.cust}</span><span><b>${fmt(j.total)}</b> - ${fmtTgl(j.tgl)}</span></div>`); if(!jual.length) lj.innerHTML="<div style='color:#64748b'>Belum ada transaksi</div>";}
 function rStok(){let q=sCari.value.toLowerCase(); let f=sFilter.value; tbStok.innerHTML=''; master.forEach((b,i)=>{if(q&&!(b.nama.toLowerCase().includes(q)||b.kode.toLowerCase().includes(q))) return; let s=stok[b.kode]?.s||0; let st=s==0?'HABIS':s<10?'TIPIS':'AMAN'; if(f=='habis'&&s!=0) return; if(f=='tipis'&&!(s>0&&s<10)) return; if(f=='aman'&&s<10) return; let bd=s==0?'b-bad':s<10?'b-warn':'b-ok'; tbStok.innerHTML+=`<tr><td><span class="badge b-kode">${b.kode}</span></td><td><b>${b.nama}</b></td><td>${fmt(b.beli)}</td><td>A ${fmt(b.jualA)}<br>B ${fmt(b.jualB)}</td><td><input type="number" value="${s}" style="width:60px" onchange="upS('${b.kode}',this.value)"> ${b.satuan}</td><td><span class="badge b-unit">${b.satuan}</span></td><td><span class="badge ${bd}">${st}</span></td><td><button onclick="editM(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Edit</button> <button onclick="delM(${i})" style="border:none;background:#fee2e2;padding:6px 8px;border-radius:8px;color:#dc2626">Hapus</button></td></tr>`;});}
 function upS(kode,v){stok[kode]={s:parseInt(v)||0,nama:master.find(b=>b.kode==kode)?.nama||''}; save(); rDash();}
 function openM(){modal.classList.add('on'); mTitle.innerText='Tambah Barang Baru + Kode'; mKode.value=''; mNama.value=''; mBeli.value=''; mJualA.value=''; mJualB.value=''; mAwal.value=0; mSatuan.value='PCS'; mIsi.value=1; mIdx.value=''; genKode();}
@@ -102,18 +152,59 @@ function initJualKeep(){let dl=document.getElementById('barangList'); if(dl){dl.
 function renderCart(){tbCart.innerHTML=''; let tot=0,laba=0; cart.forEach((k,i)=>{tot+=k.total; laba+=k.laba; tbCart.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama} (${k.grade})<br><small>${fmt(k.hrg)} x ${k.qty}</small></td><td>${k.qty}</td><td><span class="badge b-unit">${k.satuan}</span></td><td>${fmt(k.total)}</td><td><button onclick="delCart(${i})" style="border:none;background:none;color:#dc2626">✕</button></td></tr>`;}); cTot.innerText=fmt(tot); cLaba.innerText=fmt(laba);}
 function delCart(i){let k=cart[i]; stok[k.kode]={s:(stok[k.kode]?.s||0)+k.qty,nama:k.nama}; save(); cart.splice(i,1); renderCart(); initJualKeep();}
 function clearCart(){cart.forEach(k=>{stok[k.kode]={s:(stok[k.kode]?.s||0)+k.qty,nama:k.nama}}); save(); cart=[]; renderCart(); initJualKeep();}
-function rJualHist(){let tb=document.getElementById('tbJualHist'); tb.innerHTML=''; jual.forEach((j,i)=>{let kodes=j.items.map(it=>it.kode).join(', '); tb.innerHTML+=`<tr><td>${j.tgl}</td><td>${j.no}</td><td>${j.cust}</td><td>${fmt(j.total)}</td><td><span class="badge b-kode">${kodes}</span></td><td style="color:#16a34a">${fmt(j.laba)}</td><td><button onclick="hapusJual(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:4px 8px;border-radius:6px">Hapus</button></td></tr>`;}); if(!jual.length) tb.innerHTML="<tr><td colspan='7' style='text-align:center;color:#64748b'>Belum ada</td></tr>";}
+function rJualHist(){let tb=document.getElementById('tbJualHist'); tb.innerHTML=''; jual.forEach((j,i)=>{let kodes=j.items.map(it=>it.kode).join(', '); tb.innerHTML+=`<tr><td>${fmtTgl(j.tgl)}</td><td>${j.no}</td><td>${j.cust}</td><td>${fmt(j.total)}</td><td><span class="badge b-kode">${kodes}</span></td><td style="color:#16a34a">${fmt(j.laba)}</td><td><button onclick="hapusJual(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:4px 8px;border-radius:6px">Hapus</button></td></tr>`;}); if(!jual.length) tb.innerHTML="<tr><td colspan='7' style='text-align:center;color:#64748b'>Belum ada</td></tr>";}
 function hapusJual(i){if(!confirm('Hapus '+jual[i].no+'?')) return; let j=jual[i]; j.items.forEach(k=>{stok[k.kode]={s:(stok[k.kode]?.s||0)+k.qty,nama:k.nama}}); jual.splice(i,1); save(); rDash(); rJualHist(); rLap();}
 function saveJual(){if(!cart.length) return alert('Kosong'); let tot=cart.reduce((a,b)=>a+b.total,0); let laba=cart.reduce((a,b)=>a+b.laba,0); let hpp=cart.reduce((a,b)=>a+b.modal,0); let rec={no:jNo.value,tgl:jTgl.value,cust:jCust.value||'Umum',alm:jAlm.value||'',telp:jTelp.value||'',total:tot,laba,hpp,items:[...cart]}; jual.unshift(rec); save(); alert('Simpan '+rec.no); cart=[]; jCust.value=''; jAlm.value=''; jTelp.value=''; initJual(); rDash();}
 function buatInvDariCart(){if(!cart.length) return alert('Kosong'); let tot=cart.reduce((a,b)=>a+b.total,0); let hpp=cart.reduce((a,b)=>a+b.modal,0); let invNo='INV-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+(inv.length+1).toString().padStart(4,'0'); let sjNo='SJ-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+(sj.length+1).toString().padStart(4,'0'); let recJ={no:jNo.value,tgl:jTgl.value,cust:jCust.value||'Umum',alm:jAlm.value||'',telp:jTelp.value||'',total:tot,laba:cart.reduce((a,b)=>a+b.laba,0),hpp,items:[...cart]}; jual.unshift(recJ); let recInv={no:invNo,tgl:jTgl.value,cust:recJ.cust,alm:recJ.alm,telp:recJ.telp,sjNo,total:tot,status:'BELUM BAYAR',items:[...cart]}; inv.unshift(recInv); let recSj={no:sjNo,tgl:jTgl.value,invNo,cust:recJ.cust,alm:recJ.alm,items:[...cart]}; sj.unshift(recSj); save(); cart=[]; renderCart(); alert('Invoice '+invNo+' & SJ '+sjNo); go('inv'); openPrintInv(0);}
-function rInv(){tbInv.innerHTML=''; let q=iCari.value.toLowerCase(); inv.forEach((r,i)=>{if(q&&!(r.no.toLowerCase().includes(q)||r.cust.toLowerCase().includes(q))) return; tbInv.innerHTML+=`<tr><td><b>${r.no}</b></td><td>${r.tgl}</td><td>${r.cust}</td><td>${fmt(r.total)}</td><td><span class="badge ${r.status=='LUNAS'?'b-ok':'b-warn'}">${r.status}</span></td><td><button onclick="openPrintInv(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Cetak</button> <button onclick="toggleLunas(${i})" style="border:none;background:#dcfce7;padding:6px;border-radius:8px">Lunas</button> <button onclick="hapusInv(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:6px 8px;border-radius:8px">Hapus</button></td></tr>`;});}
+function rInv(){tbInv.innerHTML=''; let q=iCari.value.toLowerCase(); inv.forEach((r,i)=>{if(q&&!(r.no.toLowerCase().includes(q)||r.cust.toLowerCase().includes(q))) return; tbInv.innerHTML+=`<tr><td><b>${r.no}</b></td><td>${fmtTgl(r.tgl)}</td><td>${r.cust}</td><td>${fmt(r.total)}</td><td><span class="badge ${r.status=='LUNAS'?'b-ok':'b-warn'}">${r.status}</span></td><td><button onclick="openPrintInv(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Cetak</button> <button onclick="toggleLunas(${i})" style="border:none;background:#dcfce7;padding:6px;border-radius:8px">Lunas</button> <button onclick="hapusInv(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:6px 8px;border-radius:8px">Hapus</button></td></tr>`;});}
 function toggleLunas(i){inv[i].status=inv[i].status=='LUNAS'?'BELUM BAYAR':'LUNAS'; save(); rInv();}
 function hapusInv(i){if(!confirm('Hapus '+inv[i].no+'?')) return; inv.splice(i,1); save(); rInv();} function hapusSemuaInv(){openReset('inv');}
-function openPrintInv(i){let r=inv[i]; piNo.innerText=r.no; piTgl.innerText=r.tgl; piCust.innerText=r.cust; piAlm.innerText=r.alm; piTelp.innerText=r.telp; piStatus.innerText=r.status; piTot.innerText=fmt(r.total); piTer.innerText=terbilang(r.total)+' Rupiah'; let pc2=document.getElementById('piCust2'); if(pc2) pc2.innerText=r.cust; piItems.innerHTML=''; r.items.forEach((k,idx)=>piItems.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td>${fmt(k.hrg)}</td><td>${fmt(k.total)}</td></tr>`); window.print();}
-function rSj(){tbSj.innerHTML=''; let q=sjCari.value.toLowerCase(); sj.forEach((r,i)=>{if(q&&!(r.no.toLowerCase().includes(q)||r.invNo.toLowerCase().includes(q)||r.cust.toLowerCase().includes(q))) return; tbSj.innerHTML+=`<tr><td><b>${r.no}</b></td><td>${r.invNo}</td><td>${r.cust}</td><td>${r.tgl}</td><td><button onclick="openPrintSj(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Cetak</button> <button onclick="hapusSj(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:6px 8px;border-radius:8px">Hapus</button></td></tr>`;});}
+function openPrintInv(i){
+  let r=inv[i]; piNo.innerText=r.no; piTgl.innerText=fmtTgl(r.tgl); piCust.innerText=r.cust; piAlm.innerText=r.alm; piTelp.innerText=r.telp; piStatus.innerText=r.status; piTot.innerText=fmt(r.total); piTer.innerText=terbilang(r.total)+' Rupiah'; let pc2=document.getElementById('piCust2'); if(pc2) pc2.innerText=r.cust; piItems.innerHTML=''; r.items.forEach((k,idx)=>piItems.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td>${fmt(k.hrg)}</td><td>${fmt(k.total)}</td></tr>`);
+  document.body.className='print-inv';
+  window.print();
+  setTimeout(()=>document.body.className='',500);
+}
+function rSj(){tbSj.innerHTML=''; let q=sjCari.value.toLowerCase(); sj.forEach((r,i)=>{if(q&&!(r.no.toLowerCase().includes(q)||r.invNo.toLowerCase().includes(q)||r.cust.toLowerCase().includes(q))) return; tbSj.innerHTML+=`<tr><td><b>${r.no}</b></td><td>${r.invNo}</td><td>${r.cust}</td><td>${fmtTgl(r.tgl)}</td><td><button onclick="openPrintSj(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Cetak</button> <button onclick="hapusSj(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:6px 8px;border-radius:8px">Hapus</button></td></tr>`;});}
 function hapusSj(i){if(!confirm('Hapus '+sj[i].no+'?')) return; sj.splice(i,1); save(); rSj();} function hapusSemuaSj(){openReset('sj');}
-function openPrintSj(i){let r=sj[i]; psNo.innerText=r.no; psTgl.innerText=r.tgl; psCust.innerText=r.cust; psAlm.innerText=r.alm; let psc2=document.getElementById('psCust2'); if(psc2) psc2.innerText=r.cust; psItems.innerHTML=''; r.items.forEach((k,idx)=>psItems.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td></td></tr>`); window.print();}
-function rLap(){if(!lStart.value) lStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10); if(!lEnd.value) lEnd.value=new Date().toISOString().slice(0,10); lPeriode.innerText='Periode '+lStart.value+' s/d '+lEnd.value; let filt=jual.filter(j=>{let d=new Date(j.tgl); return d>=new Date(lStart.value)&&d<=new Date(lEnd.value+'T23:59:59')}); let om=filt.reduce((a,b)=>a+b.total,0); let hpp=filt.reduce((a,b)=>a+b.hpp,0); let kotor=om-hpp; let sewa=parseInt(bSewa.value)||0; let gaji=parseInt(bGaji.value)||0; let listrik=parseInt(bListrik.value)||0; let lain=parseInt(bLain.value)||0; let totB=sewa+gaji+listrik+lain; let bersih=kotor-totB; lrOmset.innerText=fmt(om); lrHpp.innerText=fmt(hpp); lrKotor.innerText=fmt(kotor); lrSewa.innerText=fmt(sewa); lrGaji.innerText=fmt(gaji); lrListrik.innerText=fmt(listrik); lrLain.innerText=fmt(lain); lrTotBiaya.innerText=fmt(totB); lrBersih.innerText=fmt(bersih);}
+function openPrintSj(i){
+  let r=sj[i]; psNo.innerText=r.no; psTgl.innerText=fmtTgl(r.tgl); psCust.innerText=r.cust; psAlm.innerText=r.alm; let psc2=document.getElementById('psCust2'); if(psc2) psc2.innerText=r.cust; psItems.innerHTML=''; r.items.forEach((k,idx)=>psItems.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td></td></tr>`);
+  document.body.className='print-sj';
+  window.print();
+  setTimeout(()=>document.body.className='',500);
+}
+function rLap(){
+  if(!lStart.value) lStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10);
+  if(!lEnd.value) lEnd.value=new Date().toISOString().slice(0,10);
+  lPeriode.innerText='Periode '+fmtTgl(lStart.value)+' s/d '+fmtTgl(lEnd.value);
+  document.getElementById('tglCetakLap').innerText=fmtTgl(new Date().toISOString().slice(0,10))+' '+new Date().toLocaleTimeString('id-ID');
+  let filt=jual.filter(j=>{let d=new Date(j.tgl); return d>=new Date(lStart.value)&&d<=new Date(lEnd.value+'T23:59:59')});
+  let om=filt.reduce((a,b)=>a+b.total,0); let hpp=filt.reduce((a,b)=>a+b.hpp,0); let kotor=om-hpp;
+  let sewa=parseInt(bSewa.value)||0; let gaji=parseInt(bGaji.value)||0; let listrik=parseInt(bListrik.value)||0; let lain=parseInt(bLain.value)||0;
+  let totB=sewa+gaji+listrik+lain; let bersih=kotor-totB;
+  lrOmset.innerText=fmt(om); lrHpp.innerText=fmt(hpp); lrKotor.innerText=fmt(kotor);
+  lrSewa.innerText=fmt(sewa); lrGaji.innerText=fmt(gaji); lrListrik.innerText=fmt(listrik); lrLain.innerText=fmt(lain);
+  lrTotBiaya.innerText=fmt(totB); lrBersih.innerText=fmt(bersih);
+}
+// === TOMBOL CETAK LABA RUGI - TIDAK MERUBAH DATA ===
+function cetakLabaRugi(){
+  rLap(); // pastikan data terbaru tapi tidak merubah data master
+  let src = document.getElementById('lapCard');
+  let dest = document.getElementById('printLaba');
+  // clone tanpa input (ganti input dengan text)
+  let clone = src.cloneNode(true);
+  // ganti input biaya dengan nilai text agar tercetak
+  clone.querySelectorAll('input').forEach(inp=>{
+    let span = document.createElement('span');
+    span.innerText = 'Rp '+ (parseInt(inp.value)||0).toLocaleString('id-ID');
+    span.style.fontWeight='800';
+    inp.parentNode.replaceChild(span, inp);
+  });
+  dest.innerHTML = clone.innerHTML;
+  document.body.className='print-laba';
+  window.print();
+  setTimeout(()=>{document.body.className=''; dest.innerHTML='';},500);
+}
 function openReset(type){resetType=type; document.getElementById('modalReset').classList.add('on'); if(type=='all'){resetTitle.innerText='⚠️ RESET TOTAL'; resetMsg.innerText='Yakin reset TOTAL?';} else if(type=='transaksi'){resetTitle.innerText='🗑️ Hapus Transaksi'; resetMsg.innerText='Hapus semua penjualan, invoice, SJ?';} else if(type=='stok'){resetTitle.innerText='Reset Stok'; resetMsg.innerText='Reset stok jadi 0?';} else if(type=='inv'){resetTitle.innerText='Hapus Invoice'; resetMsg.innerText='Hapus semua invoice?';} else if(type=='sj'){resetTitle.innerText='Hapus SJ'; resetMsg.innerText='Hapus semua SJ?';} }
 function closeReset(){document.getElementById('modalReset').classList.remove('on'); resetType='';}
 function doReset(){if(resetType=='all'){localStorage.removeItem('mega_kode_master');localStorage.removeItem('mega_kode_stok');localStorage.removeItem('mega_kode_jual');localStorage.removeItem('mega_kode_inv');localStorage.removeItem('mega_kode_sj'); master=DEF.map(o=>({kode:o.k,nama:o.n,beli:o.b,jualA:o.ja,jualB:o.jb,satuan:o.u||"PCS",isi:1})); stok={}; master.forEach(b=>stok[b.kode]={s:0}); jual=[]; inv=[]; sj=[];} else if(resetType=='transaksi'){jual.forEach(j=>{j.items.forEach(k=>{stok[k.kode]={s:(stok[k.kode]?.s||0)+k.qty}});}); jual=[]; inv=[]; sj=[];} else if(resetType=='stok'){master.forEach(b=>stok[b.kode]={s:0});} else if(resetType=='inv'){inv=[];} else if(resetType=='sj'){sj=[];} save(); closeReset(); go('dash');}
