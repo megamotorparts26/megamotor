@@ -133,9 +133,6 @@ async function loadOnline(){
     console.log("Load online OK", master.length, "barang");
   }catch(e){ console.log("Offline mode", e); rDash(); }
 }
-go('dash'); initJual(); rDash();
-loadOnline(); // LOAD DARI GOOGLE SHEET BAPAK
-setInterval(syncOnline, 30000); // auto sync tiap 30 detik
 function fmt(n){return "Rp "+(n||0).toLocaleString('id-ID')}
 function fmtTgl(iso){
   if(!iso) return "";
@@ -188,4 +185,6 @@ jGrade?.addEventListener('change',updH); jQty?.addEventListener('input',updH);
 document.addEventListener('click',(e)=>{let s=document.getElementById('jSaran'); let inp=document.getElementById('jBarang'); if(s &&!s.contains(e.target) && e.target!==inp){s.style.display='none';}});
 let compSaved=localStorage.getItem('mega_comp_biru'); if(compSaved){compName.value=compSaved;} else {compName.value='MEGA MOTOR - Cibadak No.32';}
 go('dash'); initJual(); rDash();
+loadOnline(); // LOAD DARI GOOGLE SHEET BAPAK
+setInterval(syncOnline, 30000); // auto sync tiap 30 detik
 </script></body></html>
