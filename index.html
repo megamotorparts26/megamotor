@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MEGA MOTOR - TAMPIL NAMA BARANG</title>
+<title>MEGA MOTOR - FINAL DD/MM/YYYY FIX PRINT</title>
 <style>
 :root{--p:#1e3a5f;--p2:#244a75;--bg:#eef2f7;--card:#fff;--b:#e2e8f0}
 *{box-sizing:border-box;font-family:Segoe UI,Inter,Roboto,sans-serif}
@@ -20,18 +20,8 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 .badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800}.b-ok{background:#dcfce7;color:#15803d}.b-warn{background:#fef9c3;color:#a16207}.b-bad{background:#fee2e2;color:#dc2626}.b-dark{background:var(--p);color:#fff}.b-unit{background:#dbeafe;color:#1d4ed8}.b-kode{background:#fef3c7;color:#92400e;font-family:monospace}
 .fab{position:fixed;right:16px;bottom:16px;background:var(--p);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:20}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;align-items:center;justify-content:center;padding:12px}.modal.on{display:flex}.box{background:#fff;width:100%;max-width:600px;border-radius:14px;padding:20px;max-height:90vh;overflow-y:auto}
-.print{display:none}
-#printLaba{display:none}
-@media print{
- .no-print{display:none!important}
- .header,.tabs,.fab,.modal{display:none!important}
-  body{background:#fff!important}
- .main{margin:0!important;padding:0!important;max-width:100%!important}
-  #v-dash,#v-stok,#v-jual,#v-inv,#v-sj,#v-lap{display:none!important}
-  body.print-inv #printInv{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}
-  body.print-sj #printSj{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}
-  body.print-laba #printLaba{display:block!important;width:100%!important;box-shadow:none!important;border:none!important;padding:20px!important}
-}
+.print{display:none}#printLaba{display:none}
+@media print{.no-print{display:none!important}.header,.tabs,.fab,.modal{display:none!important}body{background:#fff!important}.main{display:none!important}body.print-inv #printInv{display:block!important;width:100%!important;padding:20px!important}body.print-sj #printSj{display:block!important;width:100%!important;padding:20px!important}body.print-laba #printLaba{display:block!important;width:100%!important;padding:20px!important}}
 .inv-head{display:flex;justify-content:space-between;border-bottom:3px solid #111;padding-bottom:10px;margin-bottom:12px}
 .lbl{font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:4px;text-transform:uppercase}
 .saran-item{padding:8px 10px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:12px}.saran-item:hover{background:#f1f5f9}
@@ -48,34 +38,28 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 <div class="main">
 <div id="v-dash"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px"><div class="card"><div style="font-size:11px;color:#64748b">TOTAL PENDAPATAN</div><div style="font-size:24px;font-weight:800" id="kOmset">Rp 0</div><div style="font-size:11px;color:#64748b"><span id="kJenis">0</span> Jenis</div></div><div class="card" style="border-left-color:#22c55e"><div style="font-size:11px;color:#64748b">LABA KOTOR</div><div style="font-size:24px;font-weight:800" id="kLabaDash">Rp 0</div><div style="font-size:11px;color:#64748b" id="kStok">0 pcs</div></div><div class="card" style="border-left-color:#ef4444"><div style="font-size:11px;color:#64748b">JUMLAH TRANSAKSI</div><div style="font-size:24px;font-weight:800" id="kTrans">0</div></div><div class="card" style="border-left-color:#f59e0b"><div style="font-size:11px;color:#64748b">NILAI STOK</div><div style="font-size:24px;font-weight:800" id="kNilai">Rp 0</div></div></div><div class="panel"><h3>Peringatan Stok Rendah</h3><div id="krit"></div></div><div class="panel"><h3>5 Transaksi Terakhir</h3><div id="lastJual"></div><div class="grid g2" style="margin-top:14px"><button class="btn btn-danger" onclick="resetTransaksi()">🗑️ Hapus Semua Transaksi</button><button class="btn btn-p" onclick="resetAll()" style="background:#111">⚠️ Reset Total</button></div></div></div>
 <div id="v-stok" style="display:none"><div class="panel no-print"><div class="grid g3"><input id="sCari" placeholder="🔍 Cari kode atau nama barang..." oninput="rStok()"><select id="sFilter" onchange="rStok()"><option value="">Semua Status</option><option value="habis">Habis</option><option value="tipis">Menipis</option><option value="aman">Aman</option></select><button class="btn btn-l" onclick="expStok()">Export CSV</button></div></div><div class="panel"><table><thead><tr><th>Kode</th><th>Nama Barang</th><th>Beli</th><th>Jual A/B</th><th>Stok</th><th>Satuan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tbStok"></tbody></table></div></div>
-<div id="v-jual" style="display:none"><div class="grid g2"><div class="panel no-print"><h3>Transaksi Penjualan - Ketik Kode/Nama (Tampil Nama)</h3><div class="grid g2"><input id="jNo" readonly><input id="jTgl" type="date"></div><input id="jCust" placeholder="Customer" style="margin-top:8px"><input id="jAlm" placeholder="Alamat" style="margin-top:6px"><input id="jTelp" placeholder="HP" style="margin-top:6px"><hr style="margin:12px 0"><div class="grid g2"><div style="position:relative"><label class="lbl">CARI BARANG - KETIK KODE / NAMA (BISA DIKETIK)</label><input id="jBarang" placeholder="🔍 Ketik kode MM-006 atau nama..." autocomplete="off" style="font-weight:700"><datalist id="barangList"></datalist><div id="jSaran" style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:8px;max-height:240px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 20px rgba(0,0,0,.15)"></div></div><div><label class="lbl">GRADE HARGA (Internal)</label><select id="jGrade"><option value="A">Grade A (Ecer)</option><option value="B">Grade B (Grosir)</option></select></div></div><div class="grid g3" style="margin-top:8px"><div><label class="lbl">QTY</label><input id="jQty" type="number" value="1" oninput="updH()"></div><div><label class="lbl">SATUAN</label><select id="jSatuan"><option value="PCS">PCS</option><option value="DUS">DUS</option></select></div><div><label class="lbl">HARGA JUAL</label><input id="jHarga" type="number" placeholder="Harga Jual"></div></div>
+<div id="v-jual" style="display:none"><div class="grid g2"><div class="panel no-print"><h3>Transaksi Penjualan - Ketik Kode/Nama (Tampil Nama)</h3><div class="grid g2"><input id="jNo" readonly><input id="jTgl" type="date"></div><input id="jCust" placeholder="Customer" style="margin-top:8px"><input id="jAlm" placeholder="Alamat" style="margin-top:6px"><input id="jTelp" placeholder="HP" style="margin-top:6px"><hr style="margin:12px 0"><div class="grid g2"><div style="position:relative"><label class="lbl">CARI BARANG - KETIK KODE / NAMA (BISA DIKETIK)</label><input id="jBarang" placeholder="🔍 Ketik kode MM-006 atau nama..." autocomplete="off" style="font-weight:700"><div id="jSaran" style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:8px;max-height:240px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 20px rgba(0,0,0,.15)"></div></div><div><label class="lbl">GRADE HARGA (Internal)</label><select id="jGrade"><option value="A">Grade A (Ecer)</option><option value="B">Grade B (Grosir)</option></select></div></div><div class="grid g3" style="margin-top:8px"><div><label class="lbl">QTY</label><input id="jQty" type="number" value="1" oninput="updH()"></div><div><label class="lbl">SATUAN</label><select id="jSatuan"><option value="PCS">PCS</option><option value="DUS">DUS</option></select></div><div><label class="lbl">HARGA JUAL</label><input id="jHarga" type="number" placeholder="Harga Jual"></div></div>
 <div id="jLaba" style="margin-top:10px;font-weight:700;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px"></div>
 <div id="jNamaTampil" style="margin-top:8px;padding:10px;background:#dbeafe;border-radius:8px;display:none"><div style="font-size:11px;color:#1e40af">NAMA BARANG TERPILIH:</div><div style="font-size:14px;font-weight:800;color:#1e3a5f" id="jNamaText">-</div><div style="font-size:11px;color:#475569" id="jKodeText"></div></div>
 <button class="btn btn-g" style="width:100%;margin-top:8px" onclick="addCart()">+ Tambah ke Keranjang</button></div><div class="panel no-print"><h3>Keranjang <button onclick="clearCart()" style="float:right;font-size:10px;background:#fee2e2;border:none;padding:4px 8px;border-radius:6px;color:#dc2626">Kosongkan</button></h3><table><thead><tr><th>Kode</th><th>Item</th><th>Qty</th><th>Satuan</th><th>Total</th><th></th></tr></thead><tbody id="tbCart"></tbody></table><div style="margin-top:10px;border-top:1px solid #e2e8f0;padding-top:8px"><div style="display:flex;justify-content:space-between;font-size:18px"><span>TOTAL</span><b id="cTot">Rp 0</b></div><div style="display:flex;justify-content:space-between;color:#16a34a"><span>Laba</span><b id="cLaba">Rp 0</b></div></div><div class="grid g2" style="margin-top:12px"><button class="btn btn-p" onclick="saveJual()">Simpan Penjualan</button><button class="btn btn-d" onclick="buatInvDariCart()">Buat Invoice+SJ</button></div></div></div><div class="panel no-print"><h3>Riwayat Penjualan (Bisa Hapus)</h3><table><thead><tr><th>Tgl</th><th>No</th><th>Cust</th><th>Total</th><th>Kode Barang</th><th>Laba</th><th>Hapus</th></tr></thead><tbody id="tbJualHist"></tbody></table></div></div>
-<div id="v-inv" style="display:none"><div class="panel no-print"><div class="grid g2"><input id="iCari" placeholder="🔍 Cari Invoice..." oninput="rInv()"><button class="btn btn-danger" onclick="hapusSemuaInv()">Hapus Semua Invoice</button></div></div><div class="panel no-print"><table><thead><tr><th>No Inv</th><th>Tgl</th><th>Cust</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tbInv"></tbody></table></div>
-<div id="printInv" class="print"><div class="inv-head"><div><h2 style="margin:0">MEGA MOTOR</h2><small>Jln. Cibadak No. 32<br>Rawa Badak Utara Kec. Koja<br>Jakarta Utara</small></div><div style="text-align:right"><h3>INVOICE</h3><small id="piNo"></small><br><small id="piTgl"></small><br><span class="badge b-dark" id="piStatus"></span></div></div><div><b>Customer:</b> <span id="piCust"></span><br><small id="piAlm"></small> <small id="piTelp"></small></div><table border="1" cellpadding="6" style="margin-top:12px;width:100%"><thead><tr><th>Kode</th><th>Nama</th><th>Qty</th><th>Satuan</th><th>Harga</th><th>Subtotal</th></tr></thead><tbody id="piItems"></tbody></table><div style="display:flex;justify-content:flex-end;margin-top:10px"><div style="width:260px"><div style="display:flex;justify-content:space-between;font-weight:800;border-top:2px solid #000;padding-top:4px;font-size:16px"><span>TOTAL</span><span id="piTot"></span></div><small><i>Terbilang: <span id="piTer"></span></i></small></div></div>
-<div style="display:flex;justify-content:space-between;margin-top:50px;text-align:center;font-size:12px"><div style="width:45%"><div>Penerima,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b id="piCust2">Customer</b><br><small>( Tanda Tangan & Nama Jelas )</small></div></div><div style="width:45%"><div>Hormat Kami,</div><div style="height:90px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-style:italic">Tanda tangan & stempel</div><div style="border-top:1px solid #000;padding-top:6px"><b>MEGA MOTOR</b><br><small></small></div></div></div></div>
-</div>
-<div id="v-sj" style="display:none"><div class="panel no-print"><div class="grid g2"><input id="sjCari" placeholder="🔍 Cari SJ..." oninput="rSj()"><button class="btn btn-danger" onclick="hapusSemuaSj()">Hapus Semua SJ</button></div></div><div class="panel no-print"><table><thead><tr><th>No SJ</th><th>No Inv</th><th>Cust</th><th>Tgl</th><th>Aksi</th></tr></thead><tbody id="tbSj"></tbody></table></div>
-<div id="printSj" class="print"><div class="inv-head"><div><h2 style="margin:0">MEGA MOTOR</h2><small>SURAT JALAN<br>Jln. Cibadak No.32 Koja Jakut</small></div><div style="text-align:right"><h3>SURAT JALAN</h3><small id="psNo"></small><br><small id="psTgl"></small></div></div><div><b>Kepada:</b> <span id="psCust"></span> - <span id="psAlm"></span></div><table border="1" cellpadding="6" width="100%" style="margin-top:12px"><thead><tr><th>Kode</th><th>Nama</th><th>Qty</th><th>Satuan</th><th>Keterangan</th></tr></thead><tbody id="psItems"></tbody></table>
-<div style="display:flex;justify-content:space-between;margin-top:50px;text-align:center;font-size:12px"><div style="width:30%"><div>Penerima,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b id="psCust2">Customer</b></div></div><div style="width:30%"><div>Pengirim / Sopir,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px">(............................ )</div></div><div style="width:30%"><div>Hormat Kami,</div><div style="height:90px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-style:italic">Tanda tangan & stempel</div><div style="border-top:1px solid #000;padding-top:6px"><b>MEGA MOTOR</b></div></div></div>
-</div>
-</div>
+<div id="v-inv" style="display:none"><div class="panel no-print"><div class="grid g2"><input id="iCari" placeholder="🔍 Cari Invoice..." oninput="rInv()"><button class="btn btn-danger" onclick="hapusSemuaInv()">Hapus Semua Invoice</button></div></div><div class="panel no-print"><table><thead><tr><th>No Inv</th><th>Tgl</th><th>Cust</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tbInv"></tbody></table></div></div>
+<div id="v-sj" style="display:none"><div class="panel no-print"><div class="grid g2"><input id="sjCari" placeholder="🔍 Cari SJ..." oninput="rSj()"><button class="btn btn-danger" onclick="hapusSemuaSj()">Hapus Semua SJ</button></div></div><div class="panel no-print"><table><thead><tr><th>No SJ</th><th>No Inv</th><th>Cust</th><th>Tgl</th><th>Aksi</th></tr></thead><tbody id="tbSj"></tbody></table></div></div>
 <div id="v-lap" style="display:none">
-<div class="panel no-print"><div class="grid g3"><input id="lStart" type="date"><input id="lEnd" type="date"><button class="btn btn-p" onclick="rLap()">Tampilkan</button></div>
+<div class="panel no-print"><div class="grid g3"><input id="lStart" type="date" value="2026-09-30"><input id="lEnd" type="date" value="2026-10-15"><button class="btn btn-p" onclick="rLap()">Tampilkan</button></div>
 <div style="margin-top:10px;display:flex;gap:8px">
 <button class="btn btn-g" style="width:100%" onclick="cetakLabaRugi()">🖨️ CETAK LAPORAN LABA RUGI</button>
-<button class="btn btn-l" style="width:100%" onclick="cetakLabaRugi()" >📄 Cetak PDF</button>
+<button class="btn btn-l" style="width:100%" onclick="cetakLabaRugi()">📄 Cetak PDF</button>
 </div>
 </div>
 <div class="panel" id="lapCard"><div style="text-align:center;border-bottom:3px solid #111;padding-bottom:8px;margin-bottom:12px"><h2 style="margin:4px 0 0">MEGA MOTOR</h2><small>Jln. Cibadak No. 32</small><h3 style="margin:8px 0 0">Laporan Laba Rugi</h3><small id="lPeriode"></small></div><table><tbody><tr><td><b>Penjualan</b></td><td style="text-align:right" id="lrOmset">Rp 0</td></tr><tr><td>HPP</td><td style="text-align:right" id="lrHpp">Rp 0</td></tr><tr style="font-weight:800;background:#f8fafc;border-top:1px solid #000"><td>Laba Kotor</td><td style="text-align:right;color:#16a34a" id="lrKotor">Rp 0</td></tr><tr><td colspan="2" style="padding-top:12px"><b>Biaya</b></td></tr><tr><td>Sewa <input id="bSewa" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrSewa">Rp 0</td></tr><tr><td>Gaji <input id="bGaji" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrGaji">Rp 0</td></tr><tr><td>Listrik <input id="bListrik" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrListrik">Rp 0</td></tr><tr><td>Lain <input id="bLain" type="number" value="0" style="width:100px" oninput="rLap()"></td><td style="text-align:right" id="lrLain">Rp 0</td></tr><tr style="font-weight:800;background:#f1f5f9"><td>Total Biaya</td><td style="text-align:right" id="lrTotBiaya">Rp 0</td></tr><tr style="font-weight:800;font-size:18px;border-top:2px solid #111"><td>LABA BERSIH</td><td style="text-align:right;color:#16a34a" id="lrBersih">Rp 0</td></tr></tbody></table>
-<div style="margin-top:12px;font-size:10px;color:#64748b;text-align:center;border-top:1px dashed #cbd5e1;padding-top:6px">Dicetak: <span id="tglCetakLap"></span> | MEGA MOTOR - Cibadak No.32</div>
+<div style="margin-top:12px;font-size:10px;color:#64748b;text-align:center;border-top:1px dashed #cbd5e1;padding-top:6px">Dicetak: <span id="tglCetakLap"></span> | MEGA MOTOR</div>
 </div>
 </div>
-
+</div>
+<!-- PRINT AREA DI LUAR MAIN - KUNCI BIAR TIDAK KOSONG -->
+<div id="printInv" class="print"><div class="inv-head"><div><h2 style="margin:0">MEGA MOTOR</h2><small>Jln. Cibadak No. 32<br>Rawa Badak Utara Kec. Koja<br>Jakarta Utara</small></div><div style="text-align:right"><h3>INVOICE</h3><small id="piNo"></small><br><small id="piTgl"></small><br><span class="badge b-dark" id="piStatus"></span></div></div><div><b>Customer:</b> <span id="piCust"></span><br><small id="piAlm"></small> <small id="piTelp"></small></div><table border="1" cellpadding="6" style="margin-top:12px;width:100%"><thead><tr><th>Kode</th><th>Nama</th><th>Qty</th><th>Satuan</th><th>Harga</th><th>Subtotal</th></tr></thead><tbody id="piItems"></tbody></table><div style="display:flex;justify-content:flex-end;margin-top:10px"><div style="width:260px"><div style="display:flex;justify-content:space-between;font-weight:800;border-top:2px solid #000;padding-top:4px;font-size:16px"><span>TOTAL</span><span id="piTot"></span></div><small><i>Terbilang: <span id="piTer"></span></i></small></div></div><div style="display:flex;justify-content:space-between;margin-top:50px;text-align:center;font-size:12px"><div style="width:45%"><div>Penerima,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b id="piCust2">Customer</b></div></div><div style="width:45%"><div>Hormat Kami,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b>MEGA MOTOR</b></div></div></div></div>
+<div id="printSj" class="print"><div class="inv-head"><div><h2 style="margin:0">MEGA MOTOR</h2><small>SURAT JALAN<br>Jln. Cibadak No.32 Koja Jakut</small></div><div style="text-align:right"><h3>SURAT JALAN</h3><small id="psNo"></small><br><small id="psTgl"></small></div></div><div><b>Kepada:</b> <span id="psCust"></span> - <span id="psAlm"></span></div><table border="1" cellpadding="6" width="100%" style="margin-top:12px"><thead><tr><th>Kode</th><th>Nama</th><th>Qty</th><th>Satuan</th><th>Keterangan</th></tr></thead><tbody id="psItems"></tbody></table><div style="display:flex;justify-content:space-between;margin-top:50px;text-align:center;font-size:12px"><div style="width:30%"><div>Penerima,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b id="psCust2">Customer</b></div></div><div style="width:30%"><div>Pengirim / Sopir,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px">(............................ )</div></div><div style="width:30%"><div>Hormat Kami,</div><div style="height:90px"></div><div style="border-top:1px solid #000;padding-top:6px"><b>MEGA MOTOR</b></div></div></div></div>
 <div id="printLaba" class="print"></div>
-
-</div>
 <button class="fab no-print" onclick="openM()">+ Barang</button>
 <div class="modal" id="modal"><div class="box">
 <h3 id="mTitle" style="margin:0 0 14px;font-size:18px">Barang</h3>
@@ -87,7 +71,6 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 </div></div>
 <div class="modal" id="modalReset"><div class="box"><h3 id="resetTitle" style="color:#dc2626">Konfirmasi Hapus</h3><p id="resetMsg">Yakin?</p><div class="grid g2"><button class="btn btn-l" onclick="closeReset()">Batal</button><button class="btn btn-p" style="background:#dc2626" onclick="doReset()">Ya, Hapus</button></div></div></div>
 <script>
-const SHEETS_API = "https://script.google.com/macros/s/AKfycbxP8ccO7G1uIWQQygq-EksU8S924LGhzGdjMeEFzARdRGb-fESgWU19FIC3vGynIlNIYg/exec";
 const DEF=[
 {k:"MM-001",n:"BATOK BELAKANG SUPRA X",b:12000,ja:12000,jb:12000,u:"PCS"},
 {k:"MM-002",n:"BATOK BELAKANG SUPRA X 125",b:11000,ja:11000,jb:11000,u:"PCS"},
@@ -102,34 +85,65 @@ if(!master){master=DEF.map(o=>({kode:o.k,nama:o.n,beli:o.b,jualA:o.ja,jualB:o.jb
 else{master=master.map(m=>({kode:m.kode||m.k||'MM-'+Math.random().toString(36).substr(2,4).toUpperCase(),satuan:m.satuan||"PCS",isi:m.isi||1,nama:m.nama,beli:m.beli,jualA:m.jualA,jualB:m.jualB}));}
 let stok=JSON.parse(localStorage.getItem('mega_kode_stok')||'null'); if(!stok){stok={}; master.forEach(b=>stok[b.kode]={s:0,nama:b.nama});}
 let jual=JSON.parse(localStorage.getItem('mega_kode_jual')||'[]'); let inv=JSON.parse(localStorage.getItem('mega_kode_inv')||'[]'); let sj=JSON.parse(localStorage.getItem('mega_kode_sj')||'[]'); let cart=[]; let resetType='';
+const API_URL = "https://script.google.com/macros/s/AKfycbwR__F_ZHk6PVgeO3DUfDoHfx2JX7Eol63K3qIbg-wusrjvs1LMqseyb3KYG9VsVS4sDw/exec";
+
 function save(){
   localStorage.setItem('mega_kode_master',JSON.stringify(master));
   localStorage.setItem('mega_kode_stok',JSON.stringify(stok));
   localStorage.setItem('mega_kode_jual',JSON.stringify(jual));
   localStorage.setItem('mega_kode_inv',JSON.stringify(inv));
   localStorage.setItem('mega_kode_sj',JSON.stringify(sj));
-  // SYNC KE GOOGLE SHEETS - UPDATE DI SEMUA HP
-  fetch(SHEETS_API,{method:'POST',mode:'no-cors',body:JSON.stringify({type:'stok',stok:stok})});
-  fetch(SHEETS_API,{method:'POST',mode:'no-cors',body:JSON.stringify({type:'jual',jual:jual})});
-  fetch(SHEETS_API,{method:'POST',mode:'no-cors',body:JSON.stringify({type:'master',master:master})});
-  document.getElementById('syncStatus').innerText='● Online - Tersimpan di Sheets';
+  syncOnline();
 }
-async function loadFromSheets(){
+
+function syncOnline(){
+  if(!navigator.onLine) return;
+  // jangan spam, sync 1 detik sekali
   try{
-    let r=await fetch(SHEETS_API);
-    let d=await r.json();
-    if(d.master && d.master.length>0) master=d.master.map(m=>({kode:m.kode,nama:m.nama,beli:m.beli,jualA:m.jualA,jualB:m.jualB,satuan:m.satuan}));
-    if(d.stok) stok=d.stok;
-    if(d.jual) jual=d.jual;
-    localStorage.setItem('mega_kode_master',JSON.stringify(master));
-    rStok(); rDash();
-    document.getElementById('syncStatus').innerText='● Online - Google Sheets Terhubung';
-  }catch(e){}
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"master", data:master})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"stok", data:stok})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"jual", data:jual})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"inv", data:inv})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"sj", data:sj})});
+    console.log("Sync OK "+fmtTgl(new Date().toISOString().slice(0,10)));
+  }catch(e){ console.log("Sync gagal", e); }
 }
-loadFromSheets();
-setInterval(loadFromSheets,15000);
+
+async function loadOnline(){
+  try{
+    document.getElementById('kOmset').innerText = "Loading online...";
+    let [m, s, j, iv, sjd] = await Promise.all([
+      fetch(API_URL+"?action=master").then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=stok").then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=jual").then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=inv").then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=sj").then(r=>r.json()).catch(()=>[])
+    ]);
+    if(m && m.length>0){
+      master = m.map(o=>({kode:o.kode, nama:o.nama, beli:parseInt(o.beli)||0, jualA:parseInt(o.jualA)||0, jualB:parseInt(o.jualB)||0, satuan:o.satuan||"PCS", isi:parseInt(o.isi)||1}));
+    }
+    if(s && s.length>0){
+      let ns={}; s.forEach(o=>ns[o.kode]={s:parseInt(o.s)||0, nama:o.nama});
+      stok = ns;
+    }
+    if(j && j.length>0) jual = j;
+    if(iv && iv.length>0) inv = iv;
+    if(sjd && sjd.length>0) sj = sjd;
+    save(); rDash(); rStok(); rLap();
+    console.log("Load online OK", master.length, "barang");
+  }catch(e){ console.log("Offline mode", e); rDash(); }
+}
+go('dash'); initJual(); rDash();
+loadOnline(); // LOAD DARI GOOGLE SHEET BAPAK
+setInterval(syncOnline, 30000); // auto sync tiap 30 detik
 function fmt(n){return "Rp "+(n||0).toLocaleString('id-ID')}
-function fmtTgl(iso){if(!iso) return ""; let parts=iso.split('-'); if(parts.length!==3) return iso; return parts[2]+'-'+parts[1]+'-'+parts[0];}
+function fmtTgl(iso){
+  if(!iso) return "";
+  let t = iso.split('T')[0];
+  let p = t.split('-');
+  if(p.length!==3) return iso;
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
 function terbilang(n){const a=["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"]; if(n<12) return a[n]; if(n<20) return a[n-10]+" Belas"; if(n<100) return a[Math.floor(n/10)]+" Puluh "+a[n%10]; if(n<200) return "Seratus "+terbilang(n-100); if(n<1000) return a[Math.floor(n/100)]+" Ratus "+terbilang(n%100); if(n<2000) return "Seribu "+terbilang(n-1000); if(n<1000000) return terbilang(Math.floor(n/1000))+" Ribu "+terbilang(n%1000); return n.toString()}
 function genKode(){let num=master.length+1; mKode.value='MM-'+String(num).padStart(3,'0');}
 function go(t){['dash','stok','jual','inv','sj','lap'].forEach(k=>{document.getElementById('v-'+k).style.display=k==t?'block':'none'; let sb=document.getElementById('sb-'+k); if(sb) sb.classList.toggle('active',k==t);}); if(t=='stok') rStok(); if(t=='inv') rInv(); if(t=='sj') rSj(); if(t=='dash') rDash(); if(t=='lap') rLap(); if(t=='jual') initJual();}
@@ -159,52 +173,12 @@ function buatInvDariCart(){if(!cart.length) return alert('Kosong'); let tot=cart
 function rInv(){tbInv.innerHTML=''; let q=iCari.value.toLowerCase(); inv.forEach((r,i)=>{if(q&&!(r.no.toLowerCase().includes(q)||r.cust.toLowerCase().includes(q))) return; tbInv.innerHTML+=`<tr><td><b>${r.no}</b></td><td>${fmtTgl(r.tgl)}</td><td>${r.cust}</td><td>${fmt(r.total)}</td><td><span class="badge ${r.status=='LUNAS'?'b-ok':'b-warn'}">${r.status}</span></td><td><button onclick="openPrintInv(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Cetak</button> <button onclick="toggleLunas(${i})" style="border:none;background:#dcfce7;padding:6px;border-radius:8px">Lunas</button> <button onclick="hapusInv(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:6px 8px;border-radius:8px">Hapus</button></td></tr>`;});}
 function toggleLunas(i){inv[i].status=inv[i].status=='LUNAS'?'BELUM BAYAR':'LUNAS'; save(); rInv();}
 function hapusInv(i){if(!confirm('Hapus '+inv[i].no+'?')) return; inv.splice(i,1); save(); rInv();} function hapusSemuaInv(){openReset('inv');}
-function openPrintInv(i){
-  let r=inv[i]; piNo.innerText=r.no; piTgl.innerText=fmtTgl(r.tgl); piCust.innerText=r.cust; piAlm.innerText=r.alm; piTelp.innerText=r.telp; piStatus.innerText=r.status; piTot.innerText=fmt(r.total); piTer.innerText=terbilang(r.total)+' Rupiah'; let pc2=document.getElementById('piCust2'); if(pc2) pc2.innerText=r.cust; piItems.innerHTML=''; r.items.forEach((k,idx)=>piItems.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td>${fmt(k.hrg)}</td><td>${fmt(k.total)}</td></tr>`);
-  document.body.className='print-inv';
-  window.print();
-  setTimeout(()=>document.body.className='',500);
-}
+function openPrintInv(i){if(inv.length===0) return alert('Belum ada Invoice');let r=inv[i]; piNo.innerText=r.no; piTgl.innerText=fmtTgl(r.tgl); piCust.innerText=r.cust; piAlm.innerText=r.alm||''; piTelp.innerText=r.telp||''; piStatus.innerText=r.status; piTot.innerText=fmt(r.total); piTer.innerText=terbilang(r.total)+' Rupiah'; document.getElementById('piCust2').innerText=r.cust; piItems.innerHTML=''; r.items.forEach(k=>piItems.innerHTML+=`<tr><td>${k.kode}</td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td>${fmt(k.hrg)}</td><td>${fmt(k.total)}</td></tr>`);document.body.className='print-inv';setTimeout(()=>window.print(),350);setTimeout(()=>document.body.className='',1500);}
 function rSj(){tbSj.innerHTML=''; let q=sjCari.value.toLowerCase(); sj.forEach((r,i)=>{if(q&&!(r.no.toLowerCase().includes(q)||r.invNo.toLowerCase().includes(q)||r.cust.toLowerCase().includes(q))) return; tbSj.innerHTML+=`<tr><td><b>${r.no}</b></td><td>${r.invNo}</td><td>${r.cust}</td><td>${fmtTgl(r.tgl)}</td><td><button onclick="openPrintSj(${i})" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Cetak</button> <button onclick="hapusSj(${i})" style="border:none;background:#fee2e2;color:#dc2626;padding:6px 8px;border-radius:8px">Hapus</button></td></tr>`;});}
 function hapusSj(i){if(!confirm('Hapus '+sj[i].no+'?')) return; sj.splice(i,1); save(); rSj();} function hapusSemuaSj(){openReset('sj');}
-function openPrintSj(i){
-  let r=sj[i]; psNo.innerText=r.no; psTgl.innerText=fmtTgl(r.tgl); psCust.innerText=r.cust; psAlm.innerText=r.alm; let psc2=document.getElementById('psCust2'); if(psc2) psc2.innerText=r.cust; psItems.innerHTML=''; r.items.forEach((k,idx)=>psItems.innerHTML+=`<tr><td><span class="badge b-kode">${k.kode}</span></td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td></td></tr>`);
-  document.body.className='print-sj';
-  window.print();
-  setTimeout(()=>document.body.className='',500);
-}
-function rLap(){
-  if(!lStart.value) lStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10);
-  if(!lEnd.value) lEnd.value=new Date().toISOString().slice(0,10);
-  lPeriode.innerText='Periode '+fmtTgl(lStart.value)+' s/d '+fmtTgl(lEnd.value);
-  document.getElementById('tglCetakLap').innerText=fmtTgl(new Date().toISOString().slice(0,10))+' '+new Date().toLocaleTimeString('id-ID');
-  let filt=jual.filter(j=>{let d=new Date(j.tgl); return d>=new Date(lStart.value)&&d<=new Date(lEnd.value+'T23:59:59')});
-  let om=filt.reduce((a,b)=>a+b.total,0); let hpp=filt.reduce((a,b)=>a+b.hpp,0); let kotor=om-hpp;
-  let sewa=parseInt(bSewa.value)||0; let gaji=parseInt(bGaji.value)||0; let listrik=parseInt(bListrik.value)||0; let lain=parseInt(bLain.value)||0;
-  let totB=sewa+gaji+listrik+lain; let bersih=kotor-totB;
-  lrOmset.innerText=fmt(om); lrHpp.innerText=fmt(hpp); lrKotor.innerText=fmt(kotor);
-  lrSewa.innerText=fmt(sewa); lrGaji.innerText=fmt(gaji); lrListrik.innerText=fmt(listrik); lrLain.innerText=fmt(lain);
-  lrTotBiaya.innerText=fmt(totB); lrBersih.innerText=fmt(bersih);
-}
-// === TOMBOL CETAK LABA RUGI - TIDAK MERUBAH DATA ===
-function cetakLabaRugi(){
-  rLap(); // pastikan data terbaru tapi tidak merubah data master
-  let src = document.getElementById('lapCard');
-  let dest = document.getElementById('printLaba');
-  // clone tanpa input (ganti input dengan text)
-  let clone = src.cloneNode(true);
-  // ganti input biaya dengan nilai text agar tercetak
-  clone.querySelectorAll('input').forEach(inp=>{
-    let span = document.createElement('span');
-    span.innerText = 'Rp '+ (parseInt(inp.value)||0).toLocaleString('id-ID');
-    span.style.fontWeight='800';
-    inp.parentNode.replaceChild(span, inp);
-  });
-  dest.innerHTML = clone.innerHTML;
-  document.body.className='print-laba';
-  window.print();
-  setTimeout(()=>{document.body.className=''; dest.innerHTML='';},500);
-}
+function openPrintSj(i){if(sj.length===0) return alert('Belum ada Surat Jalan');let r=sj[i]; psNo.innerText=r.no; psTgl.innerText=fmtTgl(r.tgl); psCust.innerText=r.cust; psAlm.innerText=r.alm||''; document.getElementById('psCust2').innerText=r.cust; psItems.innerHTML=''; r.items.forEach(k=>psItems.innerHTML+=`<tr><td>${k.kode}</td><td>${k.nama}</td><td>${k.qty}</td><td>${k.satuan}</td><td></td></tr>`);document.body.className='print-sj';setTimeout(()=>window.print(),350);setTimeout(()=>document.body.className='',1500);}
+function rLap(){if(!lStart.value) lStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10);if(!lEnd.value) lEnd.value=new Date().toISOString().slice(0,10);lPeriode.innerText='Periode '+fmtTgl(lStart.value)+' s/d '+fmtTgl(lEnd.value);document.getElementById('tglCetakLap').innerText=fmtTgl(new Date().toISOString().slice(0,10))+' '+new Date().toLocaleTimeString('id-ID');let filt=jual.filter(j=>{let d=new Date(j.tgl); return d>=new Date(lStart.value)&&d<=new Date(lEnd.value+'T23:59:59')});let om=filt.reduce((a,b)=>a+b.total,0); let hpp=filt.reduce((a,b)=>a+b.hpp,0); let kotor=om-hpp;let sewa=parseInt(bSewa.value)||0; let gaji=parseInt(bGaji.value)||0; let listrik=parseInt(bListrik.value)||0; let lain=parseInt(bLain.value)||0;let totB=sewa+gaji+listrik+lain; let bersih=kotor-totB;lrOmset.innerText=fmt(om); lrHpp.innerText=fmt(hpp); lrKotor.innerText=fmt(kotor);lrSewa.innerText=fmt(sewa); lrGaji.innerText=fmt(gaji); lrListrik.innerText=fmt(listrik); lrLain.innerText=fmt(lain);lrTotBiaya.innerText=fmt(totB); lrBersih.innerText=fmt(bersih);}
+function cetakLabaRugi(){rLap();let src=document.getElementById('lapCard');let dest=document.getElementById('printLaba');let clone=src.cloneNode(true);clone.querySelectorAll('input').forEach(inp=>{let span=document.createElement('span');span.innerText='Rp '+(parseInt(inp.value)||0).toLocaleString('id-ID');span.style.fontWeight='800';inp.parentNode.replaceChild(span,inp);});dest.innerHTML=clone.innerHTML;document.body.className='print-laba';setTimeout(()=>window.print(),350);setTimeout(()=>{document.body.className=''; dest.innerHTML='';},1500);}
 function openReset(type){resetType=type; document.getElementById('modalReset').classList.add('on'); if(type=='all'){resetTitle.innerText='⚠️ RESET TOTAL'; resetMsg.innerText='Yakin reset TOTAL?';} else if(type=='transaksi'){resetTitle.innerText='🗑️ Hapus Transaksi'; resetMsg.innerText='Hapus semua penjualan, invoice, SJ?';} else if(type=='stok'){resetTitle.innerText='Reset Stok'; resetMsg.innerText='Reset stok jadi 0?';} else if(type=='inv'){resetTitle.innerText='Hapus Invoice'; resetMsg.innerText='Hapus semua invoice?';} else if(type=='sj'){resetTitle.innerText='Hapus SJ'; resetMsg.innerText='Hapus semua SJ?';} }
 function closeReset(){document.getElementById('modalReset').classList.remove('on'); resetType='';}
 function doReset(){if(resetType=='all'){localStorage.removeItem('mega_kode_master');localStorage.removeItem('mega_kode_stok');localStorage.removeItem('mega_kode_jual');localStorage.removeItem('mega_kode_inv');localStorage.removeItem('mega_kode_sj'); master=DEF.map(o=>({kode:o.k,nama:o.n,beli:o.b,jualA:o.ja,jualB:o.jb,satuan:o.u||"PCS",isi:1})); stok={}; master.forEach(b=>stok[b.kode]={s:0}); jual=[]; inv=[]; sj=[];} else if(resetType=='transaksi'){jual.forEach(j=>{j.items.forEach(k=>{stok[k.kode]={s:(stok[k.kode]?.s||0)+k.qty}});}); jual=[]; inv=[]; sj=[];} else if(resetType=='stok'){master.forEach(b=>stok[b.kode]={s:0});} else if(resetType=='inv'){inv=[];} else if(resetType=='sj'){sj=[];} save(); closeReset(); go('dash');}
