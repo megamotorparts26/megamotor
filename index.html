@@ -37,6 +37,13 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 </div>
 <div class="main">
 <div id="v-dash"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px"><div class="card"><div style="font-size:11px;color:#64748b">TOTAL PENDAPATAN</div><div style="font-size:24px;font-weight:800" id="kOmset">Rp 0</div><div style="font-size:11px;color:#64748b"><span id="kJenis">0</span> Jenis</div></div><div class="card" style="border-left-color:#22c55e"><div style="font-size:11px;color:#64748b">LABA KOTOR</div><div style="font-size:24px;font-weight:800" id="kLabaDash">Rp 0</div><div style="font-size:11px;color:#64748b" id="kStok">0 pcs</div></div><div class="card" style="border-left-color:#ef4444"><div style="font-size:11px;color:#64748b">JUMLAH TRANSAKSI</div><div style="font-size:24px;font-weight:800" id="kTrans">0</div></div><div class="card" style="border-left-color:#f59e0b"><div style="font-size:11px;color:#64748b">NILAI STOK</div><div style="font-size:24px;font-weight:800" id="kNilai">Rp 0</div></div></div><div class="panel"><h3>Peringatan Stok Rendah</h3><div id="krit"></div></div><div class="panel"><h3>5 Transaksi Terakhir</h3><div id="lastJual"></div><div class="grid g2" style="margin-top:14px"><button class="btn btn-danger" onclick="resetTransaksi()">🗑️ Hapus Semua Transaksi</button><button class="btn btn-p" onclick="resetAll()" style="background:#111">⚠️ Reset Total</button></div></div></div>
+
+<div class="grid g2" style="margin-top:10px">
+<button class="btn btn-p" style="background:#2563eb" onclick="tarikPaksa()">⬇️ TARIK DATA TERBARU DARI SHEET</button>
+<button class="btn btn-p" style="background:#059669" onclick="kirimPaksa()">⬆️ KIRIM DATA HP INI KE SHEET</button>
+</div>
+<div style="font-size:11px;color:#64748b;margin-top:6px">Kalau data beda laptop vs HP: di HP yang paling lengkap klik KIRIM, di laptop yang beda klik TARIK</div>
+
 <div id="v-stok" style="display:none"><div class="panel no-print"><div class="grid g3"><input id="sCari" placeholder="🔍 Cari kode atau nama barang..." oninput="rStok()"><select id="sFilter" onchange="rStok()"><option value="">Semua Status</option><option value="habis">Habis</option><option value="tipis">Menipis</option><option value="aman">Aman</option></select><button class="btn btn-l" onclick="expStok()">Export CSV</button></div></div><div class="panel"><table><thead><tr><th>Kode</th><th>Nama Barang</th><th>Beli</th><th>Jual A/B</th><th>Stok</th><th>Satuan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tbStok"></tbody></table></div></div>
 <div id="v-jual" style="display:none"><div class="grid g2"><div class="panel no-print"><h3>Transaksi Penjualan - Ketik Kode/Nama (Tampil Nama)</h3><div class="grid g2"><input id="jNo" readonly><input id="jTgl" type="date"></div><input id="jCust" placeholder="Customer" style="margin-top:8px"><input id="jAlm" placeholder="Alamat" style="margin-top:6px"><input id="jTelp" placeholder="HP" style="margin-top:6px"><hr style="margin:12px 0"><div class="grid g2"><div style="position:relative"><label class="lbl">CARI BARANG - KETIK KODE / NAMA (BISA DIKETIK)</label><input id="jBarang" placeholder="🔍 Ketik kode MM-006 atau nama..." autocomplete="off" style="font-weight:700"><div id="jSaran" style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:8px;max-height:240px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 20px rgba(0,0,0,.15)"></div></div><div><label class="lbl">GRADE HARGA (Internal)</label><select id="jGrade"><option value="A">Grade A (Ecer)</option><option value="B">Grade B (Grosir)</option></select></div></div><div class="grid g3" style="margin-top:8px"><div><label class="lbl">QTY</label><input id="jQty" type="number" value="1" oninput="updH()"></div><div><label class="lbl">SATUAN</label><select id="jSatuan"><option value="PCS">PCS</option><option value="DUS">DUS</option></select></div><div><label class="lbl">HARGA JUAL</label><input id="jHarga" type="number" placeholder="Harga Jual"></div></div>
 <div id="jLaba" style="margin-top:10px;font-weight:700;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px"></div>
@@ -87,51 +94,90 @@ let stok=JSON.parse(localStorage.getItem('mega_kode_stok')||'null'); if(!stok){s
 let jual=JSON.parse(localStorage.getItem('mega_kode_jual')||'[]'); let inv=JSON.parse(localStorage.getItem('mega_kode_inv')||'[]'); let sj=JSON.parse(localStorage.getItem('mega_kode_sj')||'[]'); let cart=[]; let resetType='';
 const API_URL = "https://script.google.com/macros/s/AKfycbwR__F_ZHk6PVgeO3DUfDoHfx2JX7Eol63K3qIbg-wusrjvs1LMqseyb3KYG9VsVS4sDw/exec";
 
+let isLoadingOnline = false; // kunci biar tidak rebutan
+let lastSync = 0;
+
 function save(){
   localStorage.setItem('mega_kode_master',JSON.stringify(master));
   localStorage.setItem('mega_kode_stok',JSON.stringify(stok));
   localStorage.setItem('mega_kode_jual',JSON.stringify(jual));
   localStorage.setItem('mega_kode_inv',JSON.stringify(inv));
   localStorage.setItem('mega_kode_sj',JSON.stringify(sj));
-  syncOnline();
+  localStorage.setItem('mega_last_save', Date.now().toString());
+  if(!isLoadingOnline) syncOnline(); // jangan sync kalau lagi load
 }
 
 function syncOnline(){
+  if(isLoadingOnline) return;
+  if(Date.now() - lastSync < 5000) return; // jangan sync tiap detik
+  lastSync = Date.now();
   if(!navigator.onLine) return;
-  // jangan spam, sync 1 detik sekali
   try{
-    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"master", data:master})});
-    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"stok", data:stok})});
-    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"jual", data:jual})});
-    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"inv", data:inv})});
-    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"sj", data:sj})});
-    console.log("Sync OK "+fmtTgl(new Date().toISOString().slice(0,10)));
-  }catch(e){ console.log("Sync gagal", e); }
+    // Kirim data paling banyak yang menang
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"master", data:master, ts:Date.now()})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"stok", data:stok, ts:Date.now()})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"jual", data:jual, ts:Date.now()})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"inv", data:inv, ts:Date.now()})});
+    fetch(API_URL, {method:"POST", mode:"no-cors", body:JSON.stringify({action:"sj", data:sj, ts:Date.now()})});
+    console.log("Sync OK "+fmtTgl(new Date().toISOString().slice(0,10))+" "+new Date().toLocaleTimeString());
+  }catch(e){}
 }
 
 async function loadOnline(){
+  isLoadingOnline = true;
   try{
-    document.getElementById('kOmset').innerText = "Loading online...";
     let [m, s, j, iv, sjd] = await Promise.all([
-      fetch(API_URL+"?action=master").then(r=>r.json()).catch(()=>[]),
-      fetch(API_URL+"?action=stok").then(r=>r.json()).catch(()=>[]),
-      fetch(API_URL+"?action=jual").then(r=>r.json()).catch(()=>[]),
-      fetch(API_URL+"?action=inv").then(r=>r.json()).catch(()=>[]),
-      fetch(API_URL+"?action=sj").then(r=>r.json()).catch(()=>[])
+      fetch(API_URL+"?action=master&r="+Date.now()).then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=stok&r="+Date.now()).then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=jual&r="+Date.now()).then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=inv&r="+Date.now()).then(r=>r.json()).catch(()=>[]),
+      fetch(API_URL+"?action=sj&r="+Date.now()).then(r=>r.json()).catch(()=>[])
     ]);
+
+    // LOGIKA ANTI BEDA: yang PALING BANYAK yang dipakai, bukan asal timpa
     if(m && m.length>0){
-      master = m.map(o=>({kode:o.kode, nama:o.nama, beli:parseInt(o.beli)||0, jualA:parseInt(o.jualA)||0, jualB:parseInt(o.jualB)||0, satuan:o.satuan||"PCS", isi:parseInt(o.isi)||1}));
+      if(m.length >= master.length){
+        master = m.map(o=>({kode:o.kode, nama:o.nama, beli:parseInt(o.beli)||0, jualA:parseInt(o.jualA)||0, jualB:parseInt(o.jualB)||0, satuan:o.satuan||"PCS", isi:parseInt(o.isi)||1}));
+        console.log("Master dari Sheet dipakai:", master.length);
+      } else {
+        console.log("Master lokal lebih banyak, kirim ke Sheet");
+        syncOnline();
+      }
     }
     if(s && s.length>0){
       let ns={}; s.forEach(o=>ns[o.kode]={s:parseInt(o.s)||0, nama:o.nama});
-      stok = ns;
+      // gabung, jangan timpa kosong
+      if(Object.keys(ns).length >= Object.keys(stok).length){
+        stok = ns;
+      }
     }
-    if(j && j.length>0) jual = j;
-    if(iv && iv.length>0) inv = iv;
-    if(sjd && sjd.length>0) sj = sjd;
-    save(); rDash(); rStok(); rLap();
-    console.log("Load online OK", master.length, "barang");
-  }catch(e){ console.log("Offline mode", e); rDash(); }
+    if(j && j.length>0 && j.length >= jual.length) jual = j;
+    if(iv && iv.length>0 && iv.length >= inv.length) inv = iv;
+    if(sjd && sjd.length>0 && sjd.length >= sj.length) sj = sjd;
+
+    localStorage.setItem('mega_kode_master',JSON.stringify(master));
+    localStorage.setItem('mega_kode_stok',JSON.stringify(stok));
+    localStorage.setItem('mega_kode_jual',JSON.stringify(jual));
+    localStorage.setItem('mega_kode_inv',JSON.stringify(inv));
+    localStorage.setItem('mega_kode_sj',JSON.stringify(sj));
+
+    rDash(); rStok(); rLap();
+    console.log("Load online selesai - Master:", master.length, "Jual:", jual.length);
+  }catch(e){ console.log("Offline", e); }
+  isLoadingOnline = false;
+}
+
+// Tambah 2 tombol manual di Dashboard Bapak (biar tidak rebutan)
+function tarikPaksa(){
+  if(confirm("Tarik data terbaru dari Google Sheet? Data HP/laptop ini akan diganti dengan data dari Sheet (yang paling baru)")){
+    loadOnline();
+  }
+}
+function kirimPaksa(){
+  if(confirm("Kirim data dari HP/laptop ini ke Google Sheet? Data di Sheet akan ditimpa dengan data di HP ini")){
+    syncOnline();
+    alert("Terkirim! Buka HP lain klik TARIK PAKSA");
+  }
 }
 function fmt(n){return "Rp "+(n||0).toLocaleString('id-ID')}
 function fmtTgl(iso){
