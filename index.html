@@ -231,6 +231,101 @@ jGrade?.addEventListener('change',updH); jQty?.addEventListener('input',updH);
 document.addEventListener('click',(e)=>{let s=document.getElementById('jSaran'); let inp=document.getElementById('jBarang'); if(s &&!s.contains(e.target) && e.target!==inp){s.style.display='none';}});
 let compSaved=localStorage.getItem('mega_comp_biru'); if(compSaved){compName.value=compSaved;} else {compName.value='MEGA MOTOR - Cibadak No.32';}
 go('dash'); initJual(); rDash();
-loadOnline(); // LOAD DARI GOOGLE SHEET BAPAK
-setInterval(syncOnline, 30000); // auto sync tiap 30 detik
+// === MEGA MOTOR REALTIME 10 DETIK - VERSION 2 FIX ===
+loadOnline();
+
+let lastSyncData = "";
+let isSyncingNow = false;
+
+async function realtimeSync(){
+  if(isSyncingNow) return;
+  isSyncingNow = true;
+  try{
+    // 1. TARIK data jual terbaru dari Google Sheet
+    const res = await fetch(GOOGLE_API_URL + "?action=jual&t=" + Date.now());
+    const dataJual = await res.json();
+    
+    // cek apakah ada perubahan dari HP lain
+    const currentHash = JSON.stringify(dataJual).length + "_" + dataJual.length;
+    if(currentHash !== lastSyncData && dataJual.length > 0){
+      console.log("Data baru dari HP lain terdeteksi:", dataJual.length);
+      lastSyncData = currentHash;
+      
+      // update jual di local
+      localStorage.setItem('mega_jual', JSON.stringify(dataJual));
+      jual = dataJual; // update variabel global
+      
+      // TARIK juga inv & sj biar invoice & surat jalan ikut update
+      try{
+        const resInv = await fetch(GOOGLE_API_URL + "?action=inv&t=" + Date.now());
+        const dataInv = await resInv.json();
+        if(dataInv.length > 0){ localStorage.setItem('mega_inv', JSON.stringify(dataInv)); inv = dataInv; }
+        
+        const resSj = await fetch(GOOGLE_API_URL + "?action=sj&t=" + Date.now());
+        const dataSj = await resSj.json();
+        if(dataSj.length > 0){ localStorage.setItem('mega_sj', JSON.stringify(dataSj)); sj = dataSj; }
+      }catch(e){}
+      
+      // refresh tampilan kalau ada fungsinya
+      if(typeof rLap === 'function') rLap();
+      if(typeof rInv === 'function') rInv();
+      if(typeof rSj === 'function') rSj();
+      if(typeof updH === 'function') updH();
+      
+      // notifikasi hijau
+      let notif = document.getElementById('rt-notif');
+      if(!notif){
+        notif = document.createElement('div');
+        notif.id = 'rt-notif';
+        notif.style = 'position:fixed;top:15px;right:15px;background:#16a34a;color:white;padding:12px 18px;border-radius:10px;font-weight:bold;z-index:999999;box-shadow:0 4px 15px rgba(0,0,0,0.3)';
+        document.body.appendChild(notif);
+      }
+      notif.innerText = '🔄 Sinkron! ' + dataJual.length + ' transaksi update';
+      notif.style.display = 'block';
+      setTimeout(()=>{ notif.style.display='none'; }, 4000);
+    } else {
+      lastSyncData = currentHash;
+    }
+  }catch(e){ console.log("Sync skip", e); }
+  isSyncingNow = false;
+}
+
+async function realtimePush(){
+  try{
+    const allData = {
+      master: JSON.parse(localStorage.getItem('mega_kode_master')||'[]'),
+      stok: JSON.parse(localStorage.getItem('mega_stok')||'{}'),
+      jual: JSON.parse(localStorage.getItem('mega_jual')||'[]'),
+      inv: JSON.parse(localStorage.getItem('mega_inv')||'[]'),
+      sj: JSON.parse(localStorage.getItem('mega_sj')||'[]')
+    };
+    if(allData.jual.length===0) return;
+    // kirim dengan format baru per-baris (Version 2)
+    await fetch(GOOGLE_API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:'jual', data: allData.jual})});
+    await fetch(GOOGLE_API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:'inv', data: allData.inv})});
+    await fetch(GOOGLE_API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:'sj', data: allData.sj})});
+    console.log("Push sukses");
+  }catch(e){}
+}
+
+// JALANKAN REALTIME
+setInterval(realtimeSync, 10000); // tiap 10 detik tarik
+setInterval(realtimePush, 15000); // tiap 15 detik push (jaga-jaga)
+
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden) realtimeSync();
+});
+
+// Hook habis jual langsung push
+let originalSaveJual = window.saveJual;
+if(originalSaveJual){
+  window.saveJual = function(){
+    let result = originalSaveJual.apply(this, arguments);
+    setTimeout(realtimePush, 800);
+    setTimeout(realtimeSync, 1500);
+    return result;
+  }
+}
+
+console.log("MEGA MOTOR REALTIME 10 DETIK AKTIF - Version 2");
 </script></body></html>
