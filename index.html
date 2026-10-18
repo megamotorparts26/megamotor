@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MEGA MOTOR - FINAL DD/MM/YYYY FIX PRINT</title>
+<title>MEGA MOTOR</title>
 <style>
 :root{--p:#1e3a5f;--p2:#244a75;--bg:#eef2f7;--card:#fff;--b:#e2e8f0}
 *{box-sizing:border-box;font-family:Segoe UI,Inter,Roboto,sans-serif}
@@ -26,7 +26,18 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 .lbl{font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:4px;text-transform:uppercase}
 .saran-item{padding:8px 10px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:12px}.saran-item:hover{background:#f1f5f9}
 </style></head><body>
-<div class="header no-print"><div><h1>📦 Aplikasi<small> - MEGA MOTOR </h1></div><div style="text-align:right"><small style="font-size:11px;opacity:.8">Nama Perusahaan</small><br><input id="compName" value="MEGA MOTOR - Cibadak No.32" onchange="localStorage.setItem('mega_comp_biru',this.value)"></div></div>
+<!-- === LOGIN MEGA MOTOR === -->
+<div id="loginPage" style="position:fixed;inset:0;background:#0f172a;z-index:1000000;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white;padding:32px;border-radius:20px;width:90%;max-width:360px;box-shadow:0 20px 40px rgba(0,0,0,.4);text-align:center">
+    <h2 style="margin:0 0 8px">MEGA MOTOR</h2>
+    <p style="margin:0 0 20px;color:#64748b;font-size:13px">Login Karyawan</p>
+    <input id="loginUser" placeholder="Username" style="width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:12px;font-size:16px">
+    <input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:16px;font-size:16px">
+    <button onclick="doLogin()" style="width:100%;padding:14px;background:#16a34a;color:white;border:none;border-radius:10px;font-weight:bold;font-size:16px">MASUK</button>
+    <p id="loginMsg" style="color:#ef4444;font-size:13px;margin-top:12px;display:none"></p>
+  </div>
+</div>
+<div class="header no-print"><div><h1>📦 Aplikasi<small> - MEGA MOTOR </small></h1></div><div style="text-align:right"><small style="font-size:11px;opacity:.8">Nama Perusahaan</small><br><input id="compName" value="MEGA MOTOR - Cibadak No.32" onchange="localStorage.setItem('mega_comp_biru',this.value)" style="padding:6px;border-radius:6px;border:none"><span id="userInfo" style="font-size:12px;margin-left:8px;font-weight:bold;color:#fff;background:#1e3a5f;padding:4px 10px;border-radius:20px"></span></div></div>
 <div class="tabs no-print">
 <button class="active" id="sb-dash" onclick="go('dash')">🏠 Dashboard</button>
 <button id="sb-stok" onclick="go('stok')">📦 Stok Barang</button>
@@ -34,7 +45,99 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 <button id="sb-inv" onclick="go('inv')">🧾 Invoice</button>
 <button id="sb-sj" onclick="go('sj')">🚚 Surat Jalan</button>
 <button id="sb-lap" onclick="go('lap')">📊 Laba Rugi</button>
+<button onclick="localStorage.removeItem('mega_login'); location.reload();" type="button" style="padding:8px 12px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Logout</button>
 </div>
+<script>
+const GOOGLE_API_URL = 'https://script.google.com/macros/s/AKfycbwR__F_ZHk6PVgeO3DUfDoHfx2JX7Eol63K3qIbg-wusrjvs1LMqseyb3KYG9VsVS4sDw/exec';
+
+const USERS_DARURAT = {
+ 'admin':{pass:'mega123',nama:'Owner',role:'owner'},
+ 'kasir':{pass:'kasir123',nama:'Kasir',role:'kasir'},
+ 'gudang':{pass:'gudang123',nama:'Gudang',role:'gudang'},
+ 'tamu':{pass:'tamu123',nama:'Tamu',role:'viewer'}
+};
+
+async function doLogin(){
+ const u=document.getElementById('loginUser').value.trim().toLowerCase();
+ const p=document.getElementById('loginPass').value.trim();
+ const msg=document.getElementById('loginMsg');
+ if(!u||!p){msg.style.display='block';msg.innerText='Isi username & password';return;}
+ // cek darurat dulu
+ if(USERS_DARURAT[u] && USERS_DARURAT[u].pass===p){
+   localStorage.setItem('mega_login',JSON.stringify({username:u,nama:USERS_DARURAT[u].nama,role:USERS_DARURAT[u].role}));
+   document.getElementById('loginPage').style.display='none';
+   applyRoleAccess(); return;
+ }
+ msg.style.display='block';msg.innerText='Username / password salah!';
+}
+
+function applyRoleAccess(){
+ let lu=JSON.parse(localStorage.getItem('mega_login')||'null');
+ if(!lu) return;
+ 
+ // Tampilkan nama
+ let el=document.getElementById('userInfo');
+ if(el) el.innerText='Hi, '+ (lu.nama || lu.username) +' ('+lu.role+')';
+ let el2=document.getElementById('userInfo2');
+ if(el2) el2.innerText = (lu.nama || lu.username) + ' - ' + lu.role;
+
+ let role = lu.role;
+
+ // Reset semua tampil dulu
+ document.querySelectorAll('.tabs button').forEach(b=>b.style.display='');
+ let fab = document.querySelector('.fab');
+ if(fab) fab.style.display='';
+
+ // ATURAN BATASAN
+ if(role === 'kasir'){
+   // Kasir tidak boleh lihat Laba Rugi, Stok, Surat Jalan
+   document.getElementById('sb-stok').style.display='none';
+   document.getElementById('sb-sj').style.display='none';
+   document.getElementById('sb-lap').style.display='none';
+   if(fab) fab.style.display='none'; // tidak boleh tambah barang
+   // sembunyikan tombol berbahaya di dashboard
+   let btns = document.querySelectorAll('.btn-danger, .btn-p[onclick="resetAll()"]');
+   btns.forEach(b=>b.style.display='none');
+   go('jual'); // langsung arahkan ke penjualan
+
+ } else if(role === 'gudang'){
+   document.getElementById('sb-jual').style.display='none';
+   document.getElementById('sb-inv').style.display='none';
+   document.getElementById('sb-lap').style.display='none';
+   go('stok');
+
+ } else if(role === 'viewer' || role === 'tamu'){
+   document.getElementById('sb-stok').style.display='none';
+   document.getElementById('sb-jual').style.display='none';
+   document.getElementById('sb-inv').style.display='none';
+   document.getElementById('sb-sj').style.display='none';
+   document.getElementById('sb-lap').style.display='none';
+   if(fab) fab.style.display='none';
+   let btns = document.querySelectorAll('.btn-danger, .btn-p');
+   btns.forEach(b=>{ if(b.innerText.includes('Hapus') || b.innerText.includes('Reset')) b.style.display='none'; });
+   go('dash');
+
+ } else {
+   // owner / admin = full akses, tidak ada yang disembunyikan
+   go('dash');
+ }
+}
+        function doLogout(){
+      localStorage.removeItem('mega_login');
+      location.reload();
+    }
+
+    (function(){
+      let lu=localStorage.getItem('mega_login');
+      if(lu){
+        document.getElementById('loginPage').style.display='none';
+        setTimeout(applyRoleAccess,300);
+      }
+    })();
+    
+</script>
+</div>
+    
 <div class="main">
 <div id="v-dash"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px"><div class="card"><div style="font-size:11px;color:#64748b">TOTAL PENDAPATAN</div><div style="font-size:24px;font-weight:800" id="kOmset">Rp 0</div><div style="font-size:11px;color:#64748b"><span id="kJenis">0</span> Jenis</div></div><div class="card" style="border-left-color:#22c55e"><div style="font-size:11px;color:#64748b">LABA KOTOR</div><div style="font-size:24px;font-weight:800" id="kLabaDash">Rp 0</div><div style="font-size:11px;color:#64748b" id="kStok">0 pcs</div></div><div class="card" style="border-left-color:#ef4444"><div style="font-size:11px;color:#64748b">JUMLAH TRANSAKSI</div><div style="font-size:24px;font-weight:800" id="kTrans">0</div></div><div class="card" style="border-left-color:#f59e0b"><div style="font-size:11px;color:#64748b">NILAI STOK</div><div style="font-size:24px;font-weight:800" id="kNilai">Rp 0</div></div></div><div class="panel"><h3>Peringatan Stok Rendah</h3><div id="krit"></div></div><div class="panel"><h3>5 Transaksi Terakhir</h3><div id="lastJual"></div><div class="grid g2" style="margin-top:14px"><button class="btn btn-danger" onclick="resetTransaksi()">🗑️ Hapus Semua Transaksi</button><button class="btn btn-p" onclick="resetAll()" style="background:#111">⚠️ Reset Total</button></div></div></div>
 
@@ -187,7 +290,26 @@ function fmtTgl(iso){
   if(p.length!==3) return iso;
   return p[2]+'/'+p[1]+'/'+p[0];
 }
-function terbilang(n){const a=["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"]; if(n<12) return a[n]; if(n<20) return a[n-10]+" Belas"; if(n<100) return a[Math.floor(n/10)]+" Puluh "+a[n%10]; if(n<200) return "Seratus "+terbilang(n-100); if(n<1000) return a[Math.floor(n/100)]+" Ratus "+terbilang(n%100); if(n<2000) return "Seribu "+terbilang(n-1000); if(n<1000000) return terbilang(Math.floor(n/1000))+" Ribu "+terbilang(n%1000); return n.toString()}
+function terbilang(angka){
+  var bilangan = ["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"];
+  angka = parseInt(angka);
+  if(angka < 12) return bilangan[angka];
+  else if(angka < 20) return terbilang(angka-10)+" Belas";
+  else if(angka < 100) return terbilang(Math.floor(angka/10))+" Puluh "+terbilang(angka%10);
+  else if(angka < 200) return "Seratus "+terbilang(angka-100);
+  else if(angka < 1000) return terbilang(Math.floor(angka/100))+" Ratus "+terbilang(angka%100);
+  else if(angka < 2000) return "Seribu "+terbilang(angka-1000);
+  else if(angka < 1000000) return terbilang(Math.floor(angka/1000))+" Ribu "+terbilang(angka%1000);
+  else if(angka < 1000000000) return terbilang(Math.floor(angka/1000000))+" Juta "+terbilang(angka%1000000);
+  else if(angka < 1000000000000) return terbilang(Math.floor(angka/1000000000))+" Milyar "+terbilang(angka%1000000000);
+  else return "";
+}
+
+function formatTerbilang(n){
+  var t = terbilang(n).replace(/\s+/g,' ').trim();
+  if(t=="") t="Nol";
+  return t + " Rupiah";
+}
 function genKode(){let num=master.length+1; mKode.value='MM-'+String(num).padStart(3,'0');}
 function go(t){['dash','stok','jual','inv','sj','lap'].forEach(k=>{document.getElementById('v-'+k).style.display=k==t?'block':'none'; let sb=document.getElementById('sb-'+k); if(sb) sb.classList.toggle('active',k==t);}); if(t=='stok') rStok(); if(t=='inv') rInv(); if(t=='sj') rSj(); if(t=='dash') rDash(); if(t=='lap') rLap(); if(t=='jual') initJual();}
 function rDash(){let jenis=master.length; let tot=0,nil=0; master.forEach(b=>{let s=stok[b.kode]?.s||0; tot+=s; nil+=s*b.beli;}); let bulan=jual.filter(x=>new Date(x.tgl).getMonth()==new Date().getMonth()); let om=bulan.reduce((a,b)=>a+b.total,0); let laba=bulan.reduce((a,b)=>a+b.laba,0); kJenis.innerText=jenis; kStok.innerText=tot+' items'; kNilai.innerText=fmt(nil); kOmset.innerText=fmt(om); document.getElementById('kTrans').innerText=bulan.length; document.getElementById('kLabaDash').innerText=fmt(laba); let k=document.getElementById('krit'); k.innerHTML=''; master.forEach(b=>{let s=stok[b.kode]?.s||0; if(s<10) k.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span><span class="badge b-kode">${b.kode}</span> ${b.nama} <span class="badge b-unit">${b.satuan}</span></span><span class="badge ${s==0?'b-bad':'b-warn'}">${s} ${b.satuan}</span></div>`}); if(!k.innerHTML) k.innerHTML='<div style="color:#16a34a">Semua stok aman ✅</div>'; let lj=document.getElementById('lastJual'); lj.innerHTML=''; jual.slice(0,5).forEach(j=>lj.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9"><span><b>${j.no}</b> - ${j.cust}</span><span><b>${fmt(j.total)}</b> - ${fmtTgl(j.tgl)}</span></div>`); if(!jual.length) lj.innerHTML="<div style='color:#64748b'>Belum ada transaksi</div>";}
@@ -328,4 +450,6 @@ if(originalSaveJual){
 }
 
 console.log("MEGA MOTOR REALTIME 10 DETIK AKTIF - Version 2");
-</script></body></html>
+</script>
+</body>
+</html>
