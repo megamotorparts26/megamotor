@@ -107,6 +107,7 @@ function fmt(n){ return "Rp "+(Number(n||0)).toLocaleString('id-ID'); }
 function fmtTgl(iso){ if(!iso) return ""; var p=iso.split('-'); return p.length==3?p[2]+'-'+p[1]+'-'+p[0]:iso; }
 function persistLocal(){ try{ localStorage.setItem('mega_kode_master',JSON.stringify(master)); localStorage.setItem('mega_kode_stok',JSON.stringify(stok)); localStorage.setItem('mega_kode_jual',JSON.stringify(jual)); localStorage.setItem('mega_kode_inv',JSON.stringify(inv)); localStorage.setItem('mega_kode_sj',JSON.stringify(sj)); localStorage.setItem('mega_pembelian',JSON.stringify(beli)); localStorage.setItem('mega_pengeluaran',JSON.stringify(pengeluaran)); }catch(e){} }
 function save(){
+window.pengeluaran = window.pengeluaran||window.peng||[]; window.peng = window.pengeluaran;
   // Paksa semua jadi array / object, jangan sampai undefined
   var data = {
     master: window.master||[],
@@ -621,7 +622,7 @@ window.peng = window.pengeluaran;
       var lokal = {};
       try{ lokal = JSON.parse(localStorage.getItem('mega_v16')||'{}'); }catch(e){}
       if(d.lastUpdate !== lokal.lastUpdate){
-        window.master=d.master||[]; window.stok=d.stok||{}; window.beli=d.beli||[]; window.jual=d.jual||[]; window.inv=d.inv||[]; window.sj=d.sj||[]; window.peng=d.peng||[];
+        window.master=d.master||[]; window.stok=d.stok||{}; window.beli=d.beli||[]; window.jual=d.jual||[]; window.inv=d.inv||[]; window.sj=d.sj||[]; window.peng=d.peng||d.pengeluaran||[]; window.pengeluaran=window.peng; window.hutang=d.hutang||d.hutangBeli||[]; window.hutangBeli=window.hutang;
         try{ localStorage.setItem('mega_v16', JSON.stringify(d)); }catch(e){}
         if(typeof window.refreshAll==='function') window.refreshAll();
       }
