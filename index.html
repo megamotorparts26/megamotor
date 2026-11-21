@@ -27,8 +27,8 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 .saran-item{padding:8px 10px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:12px}.saran-item:hover{background:#f1f5f9}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </style></head><body>
-<div id="loginPage" style="position:fixed;inset:0;background:#0f172a;z-index:1000000;display:none;align-items:center;justify-content:center"><div style="background:white;padding:32px;border-radius:20px;width:90%;max-width:360px;text-align:center"><h2 style="margin:0 0 8px">MEGA MOTOR</h2><p style="margin:0 0 20px;color:#64748b;font-size:13px">Login Karyawan</p><input id="loginUser" placeholder="Username" style="width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:12px;font-size:16px"><input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:16px;font-size:16px"><button onclick="doLogin()" style="width:100%;padding:14px;background:#16a34a;color:white;border:none;border-radius:10px;font-weight:bold;font-size:16px">MASUK</button><p id="loginMsg" style="color:#ef4444;font-size:13px;margin-top:12px;display:none"></p><p style="font-size:11px;color:#94a3b8;margin-top:14px"></p></div></div>
-<div class="header"><div><h1>📦 MEGA MOTOR</h1><small style="font-size:11px;opacity:.8">MEGA MOTOR - Cibadak No.32 - Rawa Badak Utara Kec. Koja - Jakarta Utara</small></div><div class="header-kanan"><small style="font-size:11px;opacity:.8;line-height:1">Toko</small><input id="compName" value="MEGA MOTOR - Cibadak" onchange="save()" style="padding:8px 12px;border-radius:8px;border:none;font-weight:700;width:260px;text-align:center;margin:0"><span id="userInfo" style="font-size:12px;font-weight:bold;color:#fff;background:#1e3a5f;padding:5px 12px;border-radius:20px;line-height:1">Hi, Owner (owner)</span><small style="font-size:10px;color:#93c5fd;line-height:1" id="lastSync">Sync: --:--:--</small></div></div>
+<div id="loginPage" style="position:fixed;inset:0;background:#0f172a;z-index:1000000;display:none;align-items:center;justify-content:center"><div style="background:white;padding:32px;border-radius:20px;width:90%;max-width:360px;text-align:center"><h2 style="margin:0 0 8px">MEGA MOTOR</h2><p style="margin:0 0 20px;color:#64748b;font-size:13px">Login Karyawan</p><input id="loginUser" placeholder="Username" style="width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:12px;font-size:16px"><input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:16px;font-size:16px"><button onclick="doLogin()" style="width:100%;padding:14px;background:#16a34a;color:white;border:none;border-radius:10px;font-weight:bold;font-size:16px">MASUK</button><p id="loginMsg" style="color:#ef4444;font-size:13px;margin-top:12px;display:none"></p><p style="font-size:11px;color:#94a3b8;margin-top:14px">Username : Tamu<br>Password : 1234</p></div></div>
+<div class="header"><div><h1><img src="logo-mgm-3d.png" style="width:52px;height:52px;object-fit:cover;border-radius:8px;vertical-align:middle"> MEGA MOTOR</h1><small style="font-size:11px;opacity:.8">Jl. Cibadak No.32, Rawa Badak Utara Kec. Koja - Jakarta Utara</small></div><div class="header-kanan"><small style="display:none">Toko</small><input id="compName" value="MEGA MOTOR" onchange="save()" style="display:none"><span id="userInfo" style="font-size:15px;font-weight:bold;color:#fff;background:#1e3a5f;padding:5px 12px;border-radius:20px;line-height:1">Hi, Owner (owner)</span><small style="font-size:10px;color:#93c5fd;line-height:1" id="lastSync">Sync: --:--:--</small></div></div>
 <div class="sync-status" id="syncStatus">● Menghubungkan Firebase...</div>
 <div class="tabs">
 <button class="active" id="sb-dash" onclick="go('dash')">🏠 Dashboard</button>
@@ -90,10 +90,10 @@ function loadFirebaseScript(){
   s.onload=function(){ var s2=document.createElement('script'); s2.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js'; s2.onload=tryFirebase; s2.onerror=tryFirebase; document.head.appendChild(s2); };
   s.onerror=tryFirebase; document.head.appendChild(s);
 }
-var USERS={'admin':{pass:'mega123',nama:'Owner',role:'owner'},'kasir':{pass:'kasir123',nama:'Kasir',role:'kasir'},'gudang':{pass:'gudang123',nama:'Gudang',role:'gudang'},'tamu':{pass:'tamu123',nama:'Tamu',role:'viewer'}};
+var USERS={'admin':{pass:'mega123',nama:'Owner',role:'owner'},'kasir':{pass:'kasir123',nama:'Kasir',role:'kasir'},'gudang':{pass:'gudang123',nama:'Gudang',role:'gudang'},'tamu':{pass:'1234',nama:'Tamu',role:'viewer'}};
 function doLogin(){ var u=document.getElementById('loginUser').value.trim().toLowerCase(); var p=document.getElementById('loginPass').value.trim(); var msg=document.getElementById('loginMsg'); if(!u||!p){ msg.style.display='block'; msg.innerText='Isi username & password'; return; } if(USERS[u]&&USERS[u].pass===p){ localStorage.setItem('mega_login',JSON.stringify({username:u,nama:USERS[u].nama,role:USERS[u].role})); document.getElementById('loginPage').style.display='none'; applyRoleAccess(); return; } msg.style.display='block'; msg.innerText='Username / password salah!'; }
 function doLogoutMega(){ localStorage.removeItem('mega_login'); document.getElementById('loginPage').style.display='flex'; }
-function applyRoleAccess(){ var lu=JSON.parse(localStorage.getItem('mega_login')||'null'); if(!lu) return; var el=document.getElementById('userInfo'); if(el) el.innerText='Hi, '+(lu.nama||lu.username)+' ('+lu.role+')'; document.querySelectorAll('.tabs button').forEach(function(b){ b.style.display=''; }); var fab=document.querySelector('.fab'); if(fab) fab.style.display=''; if(lu.role==='kasir'){ ['sb-sj','sb-lap','sb-peng','sb-neraca'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }); if(fab) fab.style.display='none'; go('jual'); } else if(lu.role==='gudang'){ ['sb-inv','sb-lap','sb-peng','sb-piutang','sb-hutang','sb-neraca'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }); go('stok'); } else if(lu.role==='viewer'){ ['sb-dash','sb-beli','sb-jual','sb-inv','sb-sj','sb-peng','sb-piutang','sb-hutang','sb-lap','sb-neraca'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }); if(fab) fab.style.display='none'; go('dash'); } }
+function applyRoleAccess(){ var lu=JSON.parse(localStorage.getItem('mega_login')||'null'); if(!lu) return; var el=document.getElementById('userInfo'); if(el) el.innerText='Hi, '+(lu.nama||lu.username)+' ('+lu.role+')'; document.querySelectorAll('.tabs button').forEach(function(b){ b.style.display=''; }); var fab=document.querySelector('.fab'); if(fab) fab.style.display=''; if(lu.role==='kasir'){ ['sb-sj','sb-lap','sb-peng','sb-neraca'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }); if(fab) fab.style.display='none'; go('jual'); } else if(lu.role==='gudang'){ ['sb-dash','sb-inv','sb-lap','sb-peng','sb-piutang','sb-hutang','sb-neraca'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }); go('stok'); } else if(lu.role==='viewer'){ ['sb-dash','sb-beli','sb-jual','sb-inv','sb-sj','sb-peng','sb-piutang','sb-hutang','sb-lap','sb-neraca'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }); if(fab) fab.style.display='none'; go('stok'); } }
 var DEF=[{k:"MM-001",n:"BATOK BELAKANG SUPRA X",b:12000,ja:15000,jb:14000},{k:"MM-002",n:"BATOK BELAKANG SUPRA X 125",b:11000,ja:14000,jb:13000},{k:"MM-003",n:"BATOK BELAKANG SUPRA FIT",b:12000,ja:15000,jb:14000},{k:"MM-004",n:"BATOK BELAKANG BEAT KARBU",b:10000,ja:13000,jb:12000},{k:"MM-005",n:"SPAKBOR DEPAN BEAT",b:12000,ja:15000,jb:14000},{k:"MM-006",n:"SPAKBOR DEPAN VARIO 160",b:24000,ja:28000,jb:27000},{k:"MM-007",n:"BATOK DEPAN BEAT 2020 + VISOR",b:25500,ja:32000,jb:30000},{k:"MM-008",n:"BATOK DEPAN VARIO 125",b:20000,ja:25000,jb:23000},{k:"MM-082",n:"TAMENG VARIO 125 + KECIL",b:22000,ja:27000,jb:25000},{k:"MM-126",n:"SAYAP MIO GT",b:17000,ja:21000,jb:20000}];
 var master=JSON.parse(localStorage.getItem('mega_kode_master')||'null'); if(!master){ master=DEF.map(function(o){ return {kode:o.k,nama:o.n,beli:o.b,jualA:o.ja,jualB:o.jb,satuan:"PCS",isi:1}; }); }
 var stok=JSON.parse(localStorage.getItem('mega_kode_stok')||'null'); if(!stok){ stok={}; master.forEach(function(b){ stok[b.kode]={s:20,nama:b.nama}; }); }
@@ -542,7 +542,7 @@ function openPrintInv(i){
   var r=inv[i];
   var rows=r.items.map(function(k,idx){ return '<tr><td class="tengah">'+(idx+1)+'</td><td>'+k.kode+'</td><td>'+k.nama+'</td><td class="tengah">'+k.qty+'</td><td class="tengah">'+k.satuan+'</td><td class="kanan">'+fmt(k.hrg)+'</td><td class="kanan">'+fmt(k.total)+'</td></tr>'; }).join('');
   var w=window.open('','_blank');
-  w.document.write('<html><head><title>Invoice '+r.no+'</title>'+cssCetak()+'</head><body><div class="kop"><div><h1>MEGA MOTOR</h1><p>Jln. Cibadak No.32, Rawa Badak Utara, Kec. Koja - Jakarta Utara</p><p>HP / WA: 0812-xxxx-xxxx &nbsp;|&nbsp; Toko Sparepart Motor</p></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;letter-spacing:2px">INVOICE</div><div style="font-size:12px;margin-top:6px"><b>'+r.no+'</b><br>'+tglIndo(r.tgl)+'<br><span class="badge '+(r.status=='LUNAS'?'lunas':'belum')+'">'+r.status+'</span></div></div></div><div class="box-info"><b>Kepada Yth:</b><br><b style="font-size:14px">'+r.cust+'</b><br>'+(r.alm||'-')+'<br>'+(r.telp||'')+'</div><table><tr><th>No</th><th>Kode</th><th>Nama Barang</th><th>Qty</th><th>Satuan</th><th>Harga</th><th>Subtotal</th></tr>'+rows+'</table><div style="display:flex;justify-content:flex-end;margin-top:12px"><div style="width:300px"><div style="display:flex;justify-content:space-between;padding:6px 0"><span>Subtotal</span><span>'+fmt(r.total)+'</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid #111" class="total"><span>TOTAL</span><span>'+fmt(r.total)+'</span></div></div></div><div style="margin-top:10px;background:#fef9c3;padding:10px;border-radius:8px;font-style:italic"><b>Terbilang:</b> '+terbilang(r.total)+'</div><div style="margin-top:10px;font-size:11px;color:#555">Catatan: Barang yang sudah dibeli tidak dapat dikembalikan kecuali ada kerusakan pabrik. Pembayaran dianggap lunas setelah dana diterima. Terima kasih atas kepercayaan Anda.</div><div class="ttd"><div><br>Penerima<br><div class="garis"><b>'+r.cust+'</b></div></div><div>Jakarta, '+tglIndo(new Date().toISOString().slice(0,10))+'<br>Hormat Kami<br><div class="garis"><b>MEGA MOTOR</b></div></div></div><div class="footer">Dicetak: '+new Date().toLocaleString('id-ID')+' | MEGA MOTOR</div></body></html>');
+  w.document.write('<html><head><title>Invoice '+r.no+'</title>'+cssCetak()+'</head><body><div class="kop"><div><h1>MEGA MOTOR</h1><p>Jln. Cibadak No.32, Rawa Badak Utara, Kec. Koja - Jakarta Utara</p><p>HP / WA: 0813-8954-5303 &nbsp;|&nbsp; Toko Sparepart Motor</p></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;letter-spacing:2px">INVOICE</div><div style="font-size:12px;margin-top:6px"><b>'+r.no+'</b><br>'+tglIndo(r.tgl)+'<br><span class="badge '+(r.status=='LUNAS'?'lunas':'belum')+'">'+r.status+'</span></div></div></div><div class="box-info"><b>Kepada Yth:</b><br><b style="font-size:14px">'+r.cust+'</b><br>'+(r.alm||'-')+'<br>'+(r.telp||'')+'</div><table><tr><th>No</th><th>Kode</th><th>Nama Barang</th><th>Qty</th><th>Satuan</th><th>Harga</th><th>Subtotal</th></tr>'+rows+'</table><div style="display:flex;justify-content:flex-end;margin-top:12px"><div style="width:300px"><div style="display:flex;justify-content:space-between;padding:6px 0"><span>Subtotal</span><span>'+fmt(r.total)+'</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid #111" class="total"><span>TOTAL</span><span>'+fmt(r.total)+'</span></div></div></div><div style="margin-top:10px;background:#fef9c3;padding:10px;border-radius:8px;font-style:italic"><b>Terbilang:</b> '+terbilang(r.total)+'</div><div style="margin-top:10px;font-size:11px;color:#555">Catatan: Barang yang sudah dibeli tidak dapat dikembalikan kecuali ada kerusakan pabrik. Pembayaran dianggap lunas setelah dana diterima. Terima kasih atas kepercayaan Anda.</div><div class="ttd"><div><br>Penerima<br><div class="garis"><b>'+r.cust+'</b></div></div><div>Jakarta, '+tglIndo(new Date().toISOString().slice(0,10))+'<br>Hormat Kami<br><div class="garis"><b>MEGA MOTOR</b></div></div></div><div class="footer">Dicetak: '+new Date().toLocaleString('id-ID')+' | MEGA MOTOR</div></body></html>');
   w.document.close(); setTimeout(function(){ w.print(); },300);
 }
 function hapusSj(i){ if(!confirm('Hapus '+sj[i].no+'?')) return; sj.splice(i,1); save(); rSj(); }
@@ -570,7 +570,7 @@ function cetakNeraca(){
   w.document.close(); setTimeout(function(){ w.print(); },300);
 }
 function resetAll(){ if(!confirm('Reset total?')) return; master=DEF.map(function(o){ return {kode:o.k,nama:o.n,beli:o.b,jualA:o.ja,jualB:o.jb,satuan:"PCS",isi:1}; }); stok={}; master.forEach(function(b){ stok[b.kode]={s:20,nama:b.nama}; }); jual=[]; inv=[]; sj=[]; beli=[]; pengeluaran=[]; save(); go('dash'); }
-function resetTransaksi(){ if(!confirm('Hapus semua transaksi?')) return; jual.forEach(function(j){ j.items.forEach(function(k){ stok[k.kode]={s:((stok[k.kode]&&stok[k.kode].s)||0)+k.qty}; }); }); jual=[]; inv=[]; sj=[]; beli=[]; save(); rDash(); }
+function resetTransaksi(){ if(!confirm('Hapus semua transaksi?')) return; jual.forEach(function(j){ j.items.forEach(function(k){ stok[k.kode]={s:((stok[k.kode]&&stok[k.kode].s)||0)+k.qty}; }); }); jual=[]; inv=[]; sj=[]; beli=[]; peng=[]; pengeluaran=[]; hutang=[]; hutangBeli=[]; piutang=[]; save(); rDash(); rPeng(); rHutang(); rPiutang(); }
 (function(){ var lu=localStorage.getItem('mega_login'); var lp=document.getElementById('loginPage'); if(lu){ if(lp) lp.style.display='none'; setTimeout(applyRoleAccess,300); }else{ if(lp) lp.style.display='flex'; } })();
 go('dash'); initJual(); initBeli(); rDash(); rPeng(); rHutang(); rPiutang();
 if(!lStart.value) lStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10); if(!lEnd.value) lEnd.value=new Date().toISOString().slice(0,10); if(!pTgl.value) pTgl.value=new Date().toISOString().slice(0,10);
@@ -684,6 +684,63 @@ document.addEventListener('click', function(e){
     }
   }
 }, true); // true = tangkap duluan sebelum tombol jalan
+// ===== KUNCI GLOBAL EDIT / HAPUS GUDANG - VERSI PASTI KENA =====
+var PIN_OWNER = 'MEGA1234'; // <-- GANTI PIN BAPAK
+
+function cekAkunGudang(){
+  var semua = '';
+  try{ semua += JSON.stringify(localStorage) + ' ' + JSON.stringify(sessionStorage); }catch(e){}
+  try{ semua += ' ' + (window.role||'') + ' ' + (window.currentUser||'') + ' ' + (window.user||'') + ' ' + (window.namaUser||''); }catch(e){}
+  try{
+    var u = JSON.parse(localStorage.getItem('mega_user')||localStorage.getItem('currentUser')||localStorage.getItem('user')||'null');
+    if(u) semua += ' ' + JSON.stringify(u);
+  }catch(e){}
+  semua += ' ' + (document.body.innerText||'');
+  var s = semua.toLowerCase();
+  // Cek yang paling sering dipakai: role, level, jabatan = gudang
+  if(s.indexOf('gudang')>=0) return true;
+  if(semua.indexOf('tamu')>=0) return true;
+  if(semua.indexOf('guest')>=0) return true;
+  return false;
+}
+
+// Ini yang bikin tombol jadi 🔒, tanpa peduli nama fungsinya
+document.addEventListener('click', function(e){
+  var btn = e.target.closest ? e.target.closest('button') : null;
+  if(!btn) return;
+  var txt = (btn.innerText||'').trim().toLowerCase();
+  var isEditHapus = (txt.indexOf('edit')>=0 || txt === 'hapus' || txt.indexOf('hapus')>=0);
+  if(!isEditHapus) return;
+  if(!cekAkunGudang()) return; // Owner lolos, tidak dikunci
+
+  // Gudang ketangkap, hentikan klik aslinya
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+
+  var aksi = txt.indexOf('edit')>=0 ? 'EDIT' : 'HAPUS';
+  var pin = prompt('🔒 AKSI DIKUNCI UNTUK GUDANG\n\nAksi: ' + aksi + '\nMasukkan PIN Owner untuk membuka:');
+  if(pin === null) return;
+  if(pin !== PIN_OWNER){ alert('❌ PIN salah. Aksi ' + aksi + ' dibatalkan.'); return; }
+  alert('✔ Kunci terbuka 1x untuk: ' + aksi);
+  // Jalankan klik aslinya, sekali saja, tanpa dicegat lagi
+  btn.setAttribute('data-buka-kunci','1');
+  setTimeout(function(){ btn.removeAttribute('data-buka-kunci'); }, 1000);
+  // Panggil ulang fungsi aslinya lewat onclick-nya
+  var oc = btn.getAttribute('onclick');
+  if(oc){ eval(oc); }
+}, true); // <-- true ini penting, tangkap sebelum fungsi lain jalan
+
+// Tandai tombol jadi 🔒
+setInterval(function(){
+  if(!cekAkunGudang()) return;
+  document.querySelectorAll('button').forEach(function(b){
+    var t = (b.innerText||'').trim();
+    if((t==='Edit' || t==='Hapus' || t==='✏️ Edit' || t==='🗑 Hapus') && t.indexOf('🔒')<0){
+      b.innerText = '🔒 ' + t;
+    }
+  });
+}, 800);
 </script>
 </body>
 </html>
