@@ -39,6 +39,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 <button id="sb-inv" onclick="go('inv')">🧾 Invoice</button>
 <button id="sb-sj" onclick="go('sj')">🚚 Surat Jalan</button>
 <button id="sb-peng" onclick="go('peng')">💸 Pengeluaran</button>
+<button id="sb-asset" onclick="go('asset')">🏢 Aset Perusahaan</button>
 <button id="sb-piutang" onclick="go('piutang')">📋 Piutang</button>
 <button id="sb-hutang" onclick="go('hutang')">💳 Hutang</button>
 <button id="sb-lap" onclick="go('lap')">📊 Laba Rugi</button>
@@ -74,9 +75,10 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 <div class="panel"><h3>Riwayat Piutang Lunas</h3><table><thead><tr><th>Tgl</th><th>No</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody id="tbPiutangLunas"></tbody></table></div>
 </div>
 <div id="v-peng" style="display:none"><div class="panel"><h3>Pengeluaran</h3><div class="grid g3"><input id="pTgl" type="date"><select id="pKategori"><option>Gaji</option><option>Sewa</option><option>Listrik</option><option>Transport</option><option>Lain</option></select><input id="pNominal" type="number" placeholder="Nominal"></div><input id="pKet" placeholder="Keterangan" style="margin-top:8px"><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="simpanPengeluaran()">+ Simpan Pengeluaran</button></div><div class="panel"><h3>Riwayat Pengeluaran - <span id="pTotal">Total: Rp 0</span> - <button onclick="printRiwayatKeluar()">🖨 Cetak Riwayat Pengeluaran</button> <button onclick="hapusSemuaPengeluaranPermanen()" style="background:#dc3545;color:#fff;padding:6px 10px;border:none;border-radius:6px;margin-left:5px;">Hapus Semua Permanen</button></h3><table><thead><tr><th>Tgl</th><th>Kategori</th><th>Keterangan</th><th>Nominal</th><th>Aksi</th></tr></thead><tbody id="tbPeng"></tbody></table></div></div>
+<div id="v-asset" style="display:none"><div class="panel"><h3>Tambah Aset</h3><div class="grid g3"><input id="aNama" placeholder="Nama Aset - cth: Isuzu Traga"><select id="aKategori"><option>Kendaraan Operasional</option><option>Molding</option><option>Mesin</option><option>Peralatan</option><option>Gedung</option><option>Lain</option></select><input id="aTgl" type="date"></div><div class="grid g3" style="margin-top:8px"><input id="aHarga" type="number" placeholder="Harga Beli"><input id="aUmur" type="number" placeholder="Umur (bulan) - cth: 60"><input id="aSisa" type="number" placeholder="Nilai Sisa - cth: 0"></div><input id="aKet" placeholder="Keterangan / Lokasi - cth: Toko Cibadak" style="margin-top:8px"><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="simpanAsset()">+ Simpan Aset</button></div><div class="panel"><h3>Daftar Aset - <span id="aTotal">Total Aset: Rp 0</span> | <span id="aBuku">Nilai Buku: Rp 0</span> | <span id="aSusut">Susut / Bln: Rp 0</span></h3><table><thead><tr><th>Nama</th><th>Kategori</th><th>Tgl Beli</th><th>Harga</th><th>Susut/bln</th><th>Nilai Buku</th><th>Aksi</th></tr></thead><tbody id="tbAsset"></tbody></table></div></div>
 <div id="v-hutang" style="display:none"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px"><div class="card" style="border-left-color:#ef4444"><div style="font-size:11px;color:#64748b">TOTAL HUTANG BELUM BAYAR</div><div style="font-size:22px;font-weight:800;color:#dc2626" id="kHutang">Rp 0</div><div id="kHutangJml" style="font-size:11px;color:#64748b">0 transaksi</div></div><div class="card" style="border-left-color:#16a34a"><div style="font-size:11px;color:#64748b">LUNAS BULAN INI</div><div style="font-size:22px;font-weight:800" id="kHutangLunas">Rp 0</div></div><div class="card"><div style="font-size:11px;color:#64748b">JUMLAH HUTANG</div><div style="font-size:22px;font-weight:800" id="kHutangHari">0</div></div></div><div class="panel"><div class="grid g2"><input id="hCari" placeholder="🔍 Cari supplier / no..." oninput="rHutang()"><button class="btn btn-g" onclick="bayarSemuaHutang()">Bayar Semua Yang Dicentang</button></div></div><div class="panel"><table><thead><tr><th><input type="checkbox" onchange="checkAllHutang(this.checked)"></th><th>Tgl</th><th>No Beli</th><th>Supplier</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tbHutang"></tbody></table></div></div>
 <div id="v-lap" style="display:none"><div class="panel"><div class="grid g3"><input id="lStart" type="date"><input id="lEnd" type="date"><button class="btn btn-p" onclick="rLap()">Tampilkan</button></div><div style="margin-top:10px"><button class="btn btn-g" style="width:100%" onclick="cetakLabaRugi()">🖨️ CETAK LAPORAN LABA RUGI</button></div></div><div class="panel" id="lapCard"><div style="text-align:center;border-bottom:3px solid #111;padding-bottom:8px;margin-bottom:12px"><h2 style="margin:4px 0 0">MEGA MOTOR</h2><small>Jln. Cibadak No. 32 - Rawa Badak Utara Kec. Koja - Jakarta Utara</small><h3 style="margin:8px 0 0">Laporan Laba Rugi</h3><small id="lPeriode"></small></div><table><tbody><tr><td><b>Penjualan</b></td><td style="text-align:right" id="lrOmset">Rp 0</td></tr><tr><td>HPP</td><td style="text-align:right" id="lrHpp">Rp 0</td></tr><tr style="font-weight:800;background:#f8fafc;border-top:1px solid #000"><td>Laba Kotor</td><td style="text-align:right;color:#16a34a" id="lrKotor">Rp 0</td></tr><tr><td colspan="2" style="padding-top:12px"><b>Biaya (dari Pengeluaran)</b></td></tr><tr><td>Biaya Gaji</td><td style="text-align:right" id="lrGaji">Rp 0</td></tr><tr><td>Biaya Sewa</td><td style="text-align:right" id="lrSewa">Rp 0</td></tr><tr><td>Biaya Listrik</td><td style="text-align:right" id="lrListrik">Rp 0</td></tr><tr><td>Biaya Lain-Lain</td><td style="text-align:right" id="lrLain">Rp 0</td></tr><tr style="font-weight:800;background:#f1f5f9"><td>Total Pengeluaran</td><td style="text-align:right" id="lrTotal">Rp 0</td></tr><tr style="font-weight:800;font-size:18px;border-top:2px solid #111"><td>LABA BERSIH</td><td style="text-align:right;color:#16a34a" id="lrBersih">Rp 0</td></tr></tbody></table><div style="margin-top:12px;font-size:10px;color:#64748b;text-align:center">Dicetak: <span id="tglCetakLap"></span> | MEGA MOTOR</div></div></div>
-<div id="v-neraca" style="display:none"><div class="panel"><div class="grid g3"><input id="nModal" type="number" value="15000000" placeholder="Modal Awal" oninput="save();rNeraca()"><input id="nHutangDagang" type="number" value="0" placeholder="Hutang Dagang" oninput="save();rNeraca()"><input id="nHutangBank" type="number" value="0" placeholder="Hutang Bank" oninput="save();rNeraca()"></div><div class="grid g3" style="margin-top:8px"><input id="nStart" type="date"><input id="nEnd" type="date"><button class="btn btn-p" onclick="rNeraca()">Tampilkan Neraca</button></div><button class="btn btn-g" style="width:100%;margin-top:8px" onclick="cetakNeraca()">🖨️ Cetak Neraca</button></div><div class="panel"><div style="text-align:center"><h3>Laporan Neraca Saldo</h3><small id="neracaPeriode"></small></div><table><thead><tr><th>NAMA AKUN</th><th>DEBIT</th><th>KREDIT</th></tr></thead><tbody id="tbNeracaSaldo"></tbody></table><div style="display:flex;justify-content:space-between;font-weight:800;margin-top:10px"><span>Total Debit: <span id="nTotalDebit">Rp 0</span></span><span>Total Kredit: <span id="nTotalKredit">Rp 0</span></span></div><div id="nBalanceInfo" style="text-align:center;padding:10px;border-radius:8px;margin-top:10px;font-weight:800"></div><div style="text-align:center;font-size:11px;color:#64748b" id="neracaTgl"></div></div></div>
+<div id="v-neraca" style="display:none"><div class="panel"><div class="grid g3"><input id="nModal" type="number" value="" placeholder="Modal Awal" oninput="save();rNeraca()"><input id="nHutangDagang" type="number" value="" placeholder="Hutang Dagang" oninput="save();rNeraca()"><input id="nHutangBank" type="number" value="" placeholder="Hutang Bank" oninput="save();rNeraca()"></div><div class="grid g3" style="margin-top:8px"><input id="nStart" type="date"><input id="nEnd" type="date"><button class="btn btn-p" onclick="rNeraca()">Tampilkan Neraca</button></div><button class="btn btn-g" style="width:100%;margin-top:8px" onclick="cetakNeraca()">🖨️ Cetak Neraca</button></div><div class="panel"><div style="text-align:center"><h3>Laporan Neraca Saldo</h3><small id="neracaPeriode"></small></div><table><thead><tr><th>NAMA AKUN</th><th>DEBIT</th><th>KREDIT</th></tr></thead><tbody id="tbNeracaSaldo"></tbody></table><div style="display:flex;justify-content:space-between;font-weight:800;margin-top:10px"><span>Total Debit: <span id="nTotalDebit">Rp 0</span></span><span>Total Kredit: <span id="nTotalKredit">Rp 0</span></span></div><div id="nBalanceInfo" style="text-align:center;padding:10px;border-radius:8px;margin-top:10px;font-weight:800"></div><div style="text-align:center;font-size:11px;color:#64748b" id="neracaTgl"></div></div></div>
 </div>
 <button class="fab" onclick="openM()">+ Barang</button>
 <div class="modal" id="modal"><div class="box"><h3 id="mTitle">Barang</h3><div class="grid g2"><div><label class="lbl">KODE</label><input id="mKode" placeholder="MM-001" style="font-family:monospace;font-weight:700"><button type="button" onclick="genKode()" style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:#f1f5f9;font-size:11px">Auto</button></div><div><label class="lbl">NAMA</label><input id="mNama"></div></div><div class="grid g2" style="margin-top:8px"><div><label class="lbl">BELI</label><input id="mBeli" type="number"></div><div><label class="lbl">STOK</label><input id="mAwal" type="number"></div></div><div class="grid g2" style="margin-top:8px"><div><label class="lbl">JUAL A</label><input id="mJualA" type="number"></div><div><label class="lbl">JUAL B</label><input id="mJualB" type="number"></div></div><div class="grid g2" style="margin-top:8px"><div><label class="lbl">SATUAN</label><select id="mSatuan"><option value="PCS">PCS</option><option value="DUS">DUS</option></select></div><div><label class="lbl">ISI</label><input id="mIsi" type="number" value="1"></div></div><div class="grid g2" style="margin-top:12px"><button class="btn btn-l" onclick="closeM()">Batal</button><button class="btn btn-p" onclick="saveM()">Simpan</button></div><input type="hidden" id="mIdx"></div></div>
@@ -109,8 +111,19 @@ function fmt(n){ return "Rp "+(Number(n||0)).toLocaleString('id-ID'); }
 function fmtTgl(iso){ if(!iso) return ""; var p=iso.split('-'); return p.length==3?p[2]+'-'+p[1]+'-'+p[0]:iso; }
 function persistLocal(){ try{ localStorage.setItem('mega_kode_master',JSON.stringify(master)); localStorage.setItem('mega_kode_stok',JSON.stringify(stok)); localStorage.setItem('mega_kode_jual',JSON.stringify(jual)); localStorage.setItem('mega_kode_inv',JSON.stringify(inv)); localStorage.setItem('mega_kode_sj',JSON.stringify(sj)); localStorage.setItem('mega_pembelian',JSON.stringify(beli)); localStorage.setItem('mega_pengeluaran',JSON.stringify(pengeluaran)); }catch(e){} }
 function save(){
-window.pengeluaran = window.pengeluaran||window.peng||[]; window.peng = window.pengeluaran;
-  // Paksa semua jadi array / object, jangan sampai undefined
+  window.pengeluaran = window.pengeluaran||window.peng||[]; window.peng = window.pengeluaran;
+  // Ambil Modal & Hutang Bank dari input Neraca, biar ikut ke-sync
+  var _modalVal = (typeof window._lastModal !== 'undefined' ? window._lastModal : 0);
+var _hutangBankVal = (typeof window._lastHutangBank !== 'undefined' ? window._lastHutangBank : 0);
+try{
+  var _mEl = (typeof nModal !== 'undefined' && nModal) ? nModal : document.getElementById('nModal');
+  var _hEl = (typeof nHutangBank !== 'undefined' && nHutangBank) ? nHutangBank : document.getElementById('nHutangBank');
+  if(_mEl && _mEl.value !== '' && _mEl.value !== null) _modalVal = parseInt(_mEl.value) || _modalVal;
+  if(_hEl && _hEl.value !== '' && _hEl.value !== null) _hutangBankVal = parseInt(_hEl.value) || _hutangBankVal;
+  window._lastModal = _modalVal;
+  window._lastHutangBank = _hutangBankVal;
+}catch(e){}
+
   var data = {
     master: window.master||[],
     stok: window.stok||{},
@@ -122,15 +135,20 @@ window.pengeluaran = window.pengeluaran||window.peng||[]; window.peng = window.p
     pengeluaran: window.pengeluaran||[],
     hutangBeli: window.hutangBeli||[],
     hutang: window.hutang||[],
+    aset: window.aset||[],
+    modal: _modalVal,
+    hutangBank: _hutangBankVal,
+    nModal: _modalVal,
+    nHutangBank: _hutangBankVal,
     lastUpdate: Date.now()
   };
   try{ localStorage.setItem('mega_v16', JSON.stringify(data)); }catch(e){}
   if(window.fbRef && window.fbSet){
-    window.fbSet(window.fbRef, data).then(function(){ 
-  console.log('✔ Tersimpan ke Firebase'); 
-  var el=document.getElementById('lastSync'); 
-  if(el) el.innerText='Sync: '+new Date().toLocaleTimeString('id-ID'); 
-}).catch(function(e){ console.log('Gagal Firebase:', e.message) });
+    window.fbSet(window.fbRef, data).then(function(){
+      console.log('✔ Tersimpan ke Firebase');
+      var el=document.getElementById('lastSync');
+      if(el) el.innerText='Sync: '+new Date().toLocaleTimeString('id-ID');
+    }).catch(function(e){ console.log('Gagal Firebase:', e.message) });
   }
 }
 window.save = save;
@@ -290,7 +308,7 @@ function rHutangBeli(){ try{ var el=document.getElementById('tbHutangBeli'); if(
 function rHutang(){ try{ var el=document.getElementById('tbHutang'); if(el) el.innerHTML=''; }catch(e){} }
 function refreshAll(){ rDash(); rStok(); rInv(); rSj(); rLap(); rJualHist(); rBeliHist(); rPeng(); rHutang(); rPiutangPage(); rNeraca(); rHutangBeli(); rInvBeli(); }
 function genKode(){ var num=master.length+1; mKode.value='MM-'+String(num).padStart(3,'0'); }
-function go(t){ ['dash','stok','jual','beli','inv','sj','piutang','peng','hutang','lap','neraca'].forEach(function(k){ var el=document.getElementById('v-'+k); if(el) el.style.display=k==t?'block':'none'; var sb=document.getElementById('sb-'+k); if(sb) sb.classList.toggle('active',k==t); }); if(t=='stok') rStok(); if(t=='inv') rInv(); if(t=='sj') rSj(); if(t=='dash') rDash(); if(t=='lap') rLap(); if(t=='peng') rPeng(); if(t=='hutang') rHutang(); if(t=='neraca') rNeraca(); if(t=='jual'){ initJual(); } if(t=='beli') initBeli(); }
+function go(t){ ['dash','stok','jual','beli','inv','sj','piutang','peng','asset','hutang','lap','neraca'].forEach(function(k){ var el=document.getElementById('v-'+k); if(el) el.style.display=k==t?'block':'none'; var sb=document.getElementById('sb-'+k); if(sb) sb.classList.toggle('active',k==t); }); if(t=='stok') rStok(); if(t=='inv') rInv(); if(t=='sj') rSj(); if(t=='dash') rDash(); if(t=='lap') rLap(); if(t=='peng') rPeng(); if(t=='hutang') rHutang(); if(t=='neraca') rNeraca(); if(t=='jual'){ initJual(); } if(t=='beli') initBeli(); }
 function rDash(){ var jenis=master.length; var tot=0,nil=0; master.forEach(function(b){ var s=(stok[b.kode]&&stok[b.kode].s)||0; tot+=s; nil+=s*b.beli; }); var om=jual.reduce(function(a,b){ return a+b.total; },0); var laba=jual.reduce(function(a,b){ return a+b.laba; },0); var peng=pengeluaran.reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0); var bersih=laba-peng; var piu=jual.reduce(function(a,b){ return a+(parseInt(b.piutang)||0); },0); kJenis.innerText=jenis; kStok.innerText=tot+' pcs'; kNilai.innerText=fmt(nil); kOmset.innerText=fmt(om); document.getElementById('kTrans').innerText=jual.length; document.getElementById('kLabaDash').innerText=fmt(laba); kPeng.innerText=fmt(peng); kBersih.innerText=fmt(bersih); document.getElementById('kPiutangDash').innerText=fmt(piu); var k=document.getElementById('krit'); k.innerHTML=''; master.forEach(function(b){ var s=(stok[b.kode]&&stok[b.kode].s)||0; if(s<10) k.innerHTML+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span><span class="badge b-kode">'+b.kode+'</span> '+b.nama+'</span><span class="badge '+(s==0?'b-bad':'b-warn')+'">'+s+'</span></div>'; }); if(!k.innerHTML) k.innerHTML='<div style="color:#16a34a">Semua stok aman ✅</div>'; var lj=document.getElementById('lastJual'); lj.innerHTML=''; jual.slice(0,5).forEach(function(j){ lj.innerHTML+='<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9"><span><b>'+j.no+'</b> - '+j.cust+'</span><span><b>'+fmt(j.total)+'</b> - '+fmtTgl(j.tgl)+'</span></div>'; }); if(!jual.length) lj.innerHTML="<div style='color:#64748b'>Belum ada transaksi</div>"; }
 function rStok(){ var q=sCari.value.toLowerCase(); var f=sFilter.value; tbStok.innerHTML=''; master.forEach(function(b,i){ if(q&&!(b.nama.toLowerCase().includes(q)||b.kode.toLowerCase().includes(q))) return; var s=(stok[b.kode]&&stok[b.kode].s)||0; var st=s==0?'HABIS':s<10?'TIPIS':'AMAN'; if(f=='habis'&&s!=0) return; if(f=='tipis'&&!(s>0&&s<10)) return; if(f=='aman'&&s<10) return; var bd=s==0?'b-bad':s<10?'b-warn':'b-ok'; tbStok.innerHTML+='<tr><td><span class="badge b-kode">'+b.kode+'</span></td><td><b>'+b.nama+'</b></td><td>'+fmt(b.beli)+'</td><td>A '+fmt(b.jualA)+'<br>B '+fmt(b.jualB)+'</td><td style="text-align:center;font-weight:800;font-size:14px">'+s+'</td><td><span class="badge">'+(b.satuan||'PCS')+'</span></td><td><span class="badge '+bd+'">'+st+'</span></td><td><button onclick="editM('+i+')" style="border:none;background:#f1f5f9;padding:6px 10px;border-radius:8px">Edit</button> <button onclick="delM('+i+')" style="border:none;background:#fee2e2;padding:6px 8px;border-radius:8px;color:#dc2626">Hapus</button></td></tr>'; }); }
 function upS(k,v){ stok[k]={s:parseInt(v)||0,nama:(master.find(function(b){ return b.kode==k; })||{}).nama||''}; save(); rDash(); }
@@ -558,13 +576,88 @@ function openPrintSj(i){
 }
 function simpanPengeluaran(){ var tgl=document.getElementById('pTgl').value||new Date().toISOString().slice(0,10); var kat=document.getElementById('pKategori')?document.getElementById('pKategori').value:'Lain'; var nom=parseInt(document.getElementById('pNominal').value)||0; var ket=document.getElementById('pKet')?document.getElementById('pKet').value:''; if(!nom) return alert('Isi nominal dulu'); pengeluaran.push({tgl:tgl,kategori:kat,nominal:nom,keterangan:ket}); peng=pengeluaran; save(); if(typeof persistLocal==='function') persistLocal(); rPeng(); rDash(); if(document.getElementById('pNominal')) document.getElementById('pNominal').value=''; if(document.getElementById('pKet')) document.getElementById('pKet').value=''; alert('Pengeluaran tersimpan'); }
 function hapusSemuaPengeluaranPermanen(){ if(!confirm('Hapus SEMUA pengeluaran permanen di semua HP?')) return; pengeluaran=[]; peng=[]; window.pengeluaran=[]; window.peng=[]; save(); if(typeof persistLocal==='function') persistLocal(); if(typeof rPeng==='function') rPeng(); if(typeof rDash==='function') rDash(); alert('Pengeluaran sudah dihapus permanen. Tutup semua tab di HP/laptop lain, tunggu 10 detik, baru buka lagi.'); }
+window.aset = JSON.parse(localStorage.getItem('mega_aset')||'[]'); var aset = window.aset;
+function simpanAsset(){ let nama=aNama.value.trim(); let harga=parseInt(aHarga.value)||0; let umur=parseInt(aUmur.value)||0; let sisa=parseInt(aSisa.value)||0; if(!nama) return alert('Nama aset wajib!'); if(!harga) return alert('Harga wajib!'); if(!umur) return alert('Umur (bulan) wajib! Cth: Kendaraan 60, Molding 48'); aset.unshift({nama,kategori:aKategori.value,tgl:aTgl.value||new Date().toISOString().slice(0,10),harga,umur,sisa,ket:aKet.value}); window.aset = aset; window.aset = aset; localStorage.setItem('mega_aset',JSON.stringify(aset)); if(typeof save==='function') save(); rAsset(); aNama.value=''; aHarga.value=''; aUmur.value=''; aSisa.value=''; aKet.value=''; alert('Aset tersimpan: '+nama); }
+function hitungAset(a){ let susut = a.umur>0 ? (a.harga-(a.sisa||0))/a.umur : 0; let beli=new Date(a.tgl); let now=new Date(); let pakai=(now.getFullYear()-beli.getFullYear())*12 + (now.getMonth()-beli.getMonth()); if(pakai<0) pakai=0; if(a.umur>0 && pakai>a.umur) pakai=a.umur; let akum = susut*pakai; let buku = a.harga - akum; if(buku<(a.sisa||0)) buku=a.sisa||0; return {susut, pakai, akum, buku}; }
+function rAsset(){ let tot=0,bukuTot=0,susutTot=0; let tb=document.getElementById('tbAsset'); if(!tb) return; tb.innerHTML=''; aset.forEach((a,i)=>{ let h=hitungAset(a); tot+=a.harga; bukuTot+=h.buku; susutTot+=h.susut; tb.innerHTML+=`<tr><td><b>${a.nama}</b><br><small>${a.ket||''} | Umur ${a.umur||0} bln | Sisa Rp ${(a.sisa||0).toLocaleString('id-ID')}</small></td><td>${a.kategori}</td><td>${a.tgl}</td><td><b>Rp ${a.harga.toLocaleString('id-ID')}</b></td><td>Rp ${Math.round(h.susut).toLocaleString('id-ID')}<br><small>${h.pakai} bln terpakai</small></td><td><b>Rp ${Math.round(h.buku).toLocaleString('id-ID')}</b></td><td><button onclick="hapusAsset(${i})" style="background:#fee2e2;border:none;padding:4px 8px;border-radius:6px;color:#dc2626">Hapus</button></td></tr>`; }); if(!aset.length) tb.innerHTML=`<tr><td colspan='7' style='text-align:center;color:#64748b'>Belum ada aset</td></tr>`; document.getElementById('aTotal').innerText='Total Aset: Rp '+tot.toLocaleString('id-ID'); document.getElementById('aBuku').innerText='Nilai Buku: Rp '+Math.round(bukuTot).toLocaleString('id-ID'); document.getElementById('aSusut').innerText='Susut / Bln: Rp '+Math.round(susutTot).toLocaleString('id-ID'); }
+function hapusAsset(i){ if(!confirm('Hapus '+aset[i].nama+'?')) return; aset.splice(i,1); localStorage.setItem('mega_aset',JSON.stringify(aset)); if(typeof save==='function') save(); rAsset(); }
 function rPeng(){ var tb=document.getElementById('tbPeng'); if(!tb) return; tb.innerHTML=''; var total=0; pengeluaran.forEach(function(r,i){ var bersih=String(r.nominal).replace(/[^0-9]/g,''); total+=Number(bersih)||0; tb.innerHTML+='<tr><td>'+fmtTgl(r.tgl)+'</td><td><span style="background:#fef9c3;padding:3px 8px;border-radius:10px;font-size:11px">'+r.kategori+'</span></td><td>'+(r.ket||'')+'</td><td style="color:#dc2626;font-weight:700">'+fmt(Number(bersih||0))+'</td><td><button onclick="hapusPeng('+i+')" style="border:none;background:#fee2e2;color:#dc2626;padding:4px 10px;border-radius:6px">Hapus</button></td></tr>'; }); document.getElementById('pTotal').innerText='Total: '+fmt(total); }
 function hapusPeng(i){ if(!confirm('Hapus pengeluaran ini?')) return; pengeluaran.splice(i,1); peng=pengeluaran; save(); rPeng(); rDash(); rLap(); rNeraca(); }
 function rHutang(){ var tb=document.getElementById('tbHutang'); if(!tb) return; var q=(document.getElementById('hCari').value||'').toLowerCase(); tb.innerHTML=''; var totalHutang=0,jmlHutang=0,totalLunasBulan=0; var bulanIni=new Date().getMonth(); beli.forEach(function(r,i){ if(r.status==='LUNAS'){ if(new Date(r.tgl).getMonth()===bulanIni) totalLunasBulan+=r.total; return; } if(q&&!(r.no.toLowerCase().includes(q)||(r.supplier||'').toLowerCase().includes(q))) return; totalHutang+=r.total; jmlHutang++; tb.innerHTML+='<tr><td><input type="checkbox" class="hCheck" data-i="'+i+'"></td><td>'+fmtTgl(r.tgl)+'</td><td><b>'+r.no+'</b></td><td>'+r.supplier+'</td><td style="color:#dc2626;font-weight:800">'+fmt(r.total)+'</td><td><span style="background:#fef9c3;color:#a16207;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800">BELUM BAYAR</span></td><td style="display:flex;gap:6px"><button onclick="bayarHutang('+i+')" style="border:none;background:#16a34a;color:#fff;padding:6px 12px;border-radius:7px;font-weight:800;font-size:11px">Bayar Lunas</button></td></tr>'; }); if(jmlHutang===0) tb.innerHTML="<tr><td colspan='7' style='text-align:center;color:#64748b;padding:20px'>✅ Tidak ada hutang, semua sudah LUNAS</td></tr>"; document.getElementById('kHutang').innerText=fmt(totalHutang); document.getElementById('kHutangJml').innerText=jmlHutang+' transaksi belum bayar'; document.getElementById('kHutangLunas').innerText=fmt(totalLunasBulan); document.getElementById('kHutangHari').innerText=jmlHutang; }
 function bayarHutang(i){ if(!beli[i]) return; var p=beli[i]; if(!confirm('Bayar LUNAS hutang '+p.no+' - '+fmt(p.total)+' ke '+p.supplier+'?')) return; p.status='LUNAS'; save(); rHutang(); rBeliHist(); rDash(); alert('✅ Hutang '+p.no+' sudah LUNAS!'); }
 function bayarSemuaHutang(){ var checks=document.querySelectorAll('.hCheck:checked'); if(!checks.length) return alert('Pilih hutang yang mau dibayar dulu'); if(!confirm('Bayar LUNAS '+checks.length+' hutang terpilih?')) return; checks.forEach(function(ch){ var i=parseInt(ch.getAttribute('data-i')); if(beli[i]) beli[i].status='LUNAS'; }); save(); rHutang(); rBeliHist(); alert('✅ '+checks.length+' hutang berhasil dilunasi!'); }
 function checkAllHutang(v){ document.querySelectorAll('.hCheck').forEach(function(c){ c.checked=v; }); }
-function rNeraca(){ if(!nStart.value) nStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10); if(!nEnd.value) nEnd.value=new Date().toISOString().slice(0,10); var sVal=nStart.value; var eVal=nEnd.value; var startDate=new Date(sVal); var endDate=new Date(eVal+'T23:59:59'); function inPeriode(t){ if(!t) return true; var d=new Date(t); return d>=startDate&&d<=endDate; } var jualF=jual.filter(function(j){ return inPeriode(j.tgl); }); var invF=inv.filter(function(i){ return inPeriode(i.tgl); }); var pengF=pengeluaran.filter(function(p){ return inPeriode(p.tgl); }); var totPersediaan=0; master.forEach(function(b){ totPersediaan+=((stok[b.kode]&&stok[b.kode].s)||0)*(parseInt(b.beli)||0); }); var totPiutang=invF.filter(function(x){ return x.status!=='LUNAS'; }).reduce(function(a,b){ return a+(parseInt(b.total)||0); },0); var totPendapatan=jualF.reduce(function(a,b){ return a+(parseInt(b.total)||0); },0); var totPeng=pengF.reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0); var biayaGaji=pengF.filter(function(p){ return (p.kategori||'').toLowerCase().includes('gaji'); }).reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0); var biayaSewa=pengF.filter(function(p){ return (p.kategori||'').toLowerCase().includes('sewa'); }).reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0); var biayaLain=totPeng-biayaGaji-biayaSewa; var modal=parseInt(nModal.value)||15000000; var hutangBank=parseInt(nHutangBank.value)||0; var pembelianF=beli.filter(function(p){ return inPeriode(p.tgl); }); var hutangDagang=pembelianF.filter(function(x){ return (x.status||'BELUM')!=='LUNAS'; }).reduce(function(a,b){ return a+(parseInt(b.total)||0); },0); var totalKreditTanpaKas=hutangDagang+hutangBank+modal+totPendapatan; var totalDebitTanpaKas=totPiutang+totPersediaan+biayaGaji+biayaSewa+biayaLain; var kas=totalKreditTanpaKas-totalDebitTanpaKas; if(kas<0) kas=0; var akun=[{nama:'Kas',debit:kas,kredit:0},{nama:'Piutang Dagang',debit:totPiutang,kredit:0},{nama:'Persediaan',debit:totPersediaan,kredit:0},{nama:'Hutang Dagang',debit:0,kredit:hutangDagang},{nama:'Hutang Bank',debit:0,kredit:hutangBank},{nama:'Modal',debit:0,kredit:modal},{nama:'Pendapatan Usaha',debit:0,kredit:totPendapatan},{nama:'Biaya Gaji Karyawan',debit:biayaGaji,kredit:0},{nama:'Biaya Sewa Gedung',debit:biayaSewa,kredit:0},{nama:'Biaya Lain-Lain',debit:biayaLain,kredit:0}]; var tbody=document.getElementById('tbNeracaSaldo'); tbody.innerHTML=''; var totalD=0,totalK=0; akun.forEach(function(a){ totalD+=a.debit; totalK+=a.kredit; tbody.innerHTML+='<tr><td style="padding:10px">'+a.nama+'</td><td style="padding:10px;text-align:right">'+(a.debit?fmt(a.debit):'-')+'</td><td style="padding:10px;text-align:right">'+(a.kredit?fmt(a.kredit):'-')+'</td></tr>'; }); document.getElementById('nTotalDebit').innerText=fmt(totalD); document.getElementById('nTotalKredit').innerText=fmt(totalK); document.getElementById('neracaPeriode').innerText='Periode '+fmtTgl(sVal)+' s/d '+fmtTgl(eVal); document.getElementById('neracaTgl').innerText='Dicetak: '+new Date().toLocaleString('id-ID'); var bal=document.getElementById('nBalanceInfo'); if(totalD===totalK){ bal.style.background='#dcfce7'; bal.style.color='#15803d'; bal.innerText='✅ BALANCE - Debit = Kredit'; }else{ bal.style.background='#fee2e2'; bal.style.color='#dc2626'; bal.innerText='⚠️ TIDAK BALANCE - Selisih '+fmt(Math.abs(totalD-totalK)); } }
+function rNeraca(){
+  if(!nStart.value) nStart.value=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10);
+  if(!nEnd.value) nEnd.value=new Date().toISOString().slice(0,10);
+  var sVal=nStart.value; var eVal=nEnd.value;
+  var startDate=new Date(sVal); var endDate=new Date(eVal+'T23:59:59');
+  function inPeriode(t){ if(!t) return true; var d=new Date(t); return d>=startDate&&d<=endDate; }
+  var jualF=jual.filter(function(j){ return inPeriode(j.tgl); });
+  var invF=inv.filter(function(i){ return inPeriode(i.tgl); });
+  var pengF=pengeluaran.filter(function(p){ return inPeriode(p.tgl); });
+  var totPersediaan=0; master.forEach(function(b){ totPersediaan+=((stok[b.kode]&&stok[b.kode].s)||0)*(parseInt(b.beli)||0); });
+  var totPiutang=invF.filter(function(x){ return x.status!=='LUNAS'; }).reduce(function(a,b){ return a+(parseInt(b.total)||0); },0);
+  var totPendapatan=jualF.reduce(function(a,b){ return a+(parseInt(b.total)||0); },0);
+  var totPeng=pengF.reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0);
+  var biayaGaji=pengF.filter(function(p){ return (p.kategori||'').toLowerCase().includes('gaji'); }).reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0);
+  var biayaSewa=pengF.filter(function(p){ return (p.kategori||'').toLowerCase().includes('sewa'); }).reduce(function(a,b){ return a+(parseInt(b.nominal)||0); },0);
+  var biayaLain=totPeng-biayaGaji-biayaSewa;
+  var modal=(typeof window._lastModal!=='undefined'?window._lastModal:0); try{ var _me=(typeof nModal!=='undefined'&&nModal)?nModal:document.getElementById('nModal'); if(_me&&_me.value!==''&&_me.value!==null) modal=parseInt(_me.value)||modal; }catch(e){}
+  var hutangBank=parseInt(nHutangBank.value)||0;
+  var pembelianF=beli.filter(function(p){ return inPeriode(p.tgl); });
+  var hutangDagang=pembelianF.filter(function(x){ return (x.status||'BELUM')!=='LUNAS'; }).reduce(function(a,b){ return a+(parseInt(b.total)||0); },0);
+
+  // --- ASET TETAP MASUK NERACA ---
+  var _aset = window.aset || (typeof aset!=='undefined'?aset:[]) || [];
+  var _totalHargaAset=0, _totalAkumAset=0;
+  _aset.forEach(function(a){
+    var harga=Number(a.harga)||0;
+    var sisa=Number(a.sisa)||0;
+    var umur=Number(a.umur)||0;
+    if(!harga || !umur) return;
+    var susutBln=(harga-sisa)/umur;
+    var tglBeli=a.tgl?new Date(a.tgl):new Date();
+    var blnPakai=(endDate.getFullYear()-tglBeli.getFullYear())*12+(endDate.getMonth()-tglBeli.getMonth());
+    if(blnPakai<0) blnPakai=0;
+    if(blnPakai>umur) blnPakai=umur;
+    var akum=susutBln*blnPakai;
+    _totalHargaAset+=harga;
+    _totalAkumAset+=akum;
+  });
+  var _totalBukuAset=_totalHargaAset-_totalAkumAset;
+
+  var totalKreditTanpaKas=hutangDagang+hutangBank+modal+totPendapatan+_totalAkumAset;
+  var totalDebitTanpaKas=totPiutang+totPersediaan+biayaGaji+biayaSewa+biayaLain+_totalHargaAset+_totalAkumAset;
+  var kas=totalKreditTanpaKas-totalDebitTanpaKas;
+  if(kas<0) kas=0;
+
+  var akun=[
+    {nama:'Kas',debit:kas,kredit:0},
+    {nama:'Piutang Dagang',debit:totPiutang,kredit:0},
+    {nama:'Persediaan',debit:totPersediaan,kredit:0},
+    {nama:'Aset Tetap - Harga Perolehan',debit:_totalHargaAset,kredit:0},
+    {nama:'Akumulasi Penyusutan Aset',debit:0,kredit:_totalAkumAset},
+    {nama:'Hutang Dagang',debit:0,kredit:hutangDagang},
+    {nama:'Hutang Bank',debit:0,kredit:hutangBank},
+    {nama:'Modal',debit:0,kredit:modal},
+    {nama:'Pendapatan Usaha',debit:0,kredit:totPendapatan},
+    {nama:'Biaya Gaji Karyawan',debit:biayaGaji,kredit:0},
+    {nama:'Biaya Sewa Gedung',debit:biayaSewa,kredit:0},
+    {nama:'Biaya Penyusutan Aset',debit:_totalAkumAset,kredit:0},
+    {nama:'Biaya Lain-Lain',debit:biayaLain,kredit:0}
+  ];
+  var tbody=document.getElementById('tbNeracaSaldo'); tbody.innerHTML='';
+  var totalD=0,totalK=0;
+  akun.forEach(function(a){ totalD+=a.debit; totalK+=a.kredit; tbody.innerHTML+='<tr><td style="padding:10px">'+a.nama+'</td><td style="padding:10px;text-align:right">'+(a.debit?fmt(a.debit):'-')+'</td><td style="padding:10px;text-align:right">'+(a.kredit?fmt(a.kredit):'-')+'</td></tr>'; });
+  document.getElementById('nTotalDebit').innerText=fmt(totalD);
+  document.getElementById('nTotalKredit').innerText=fmt(totalK);
+  document.getElementById('neracaPeriode').innerText='Periode '+fmtTgl(sVal)+' s/d '+fmtTgl(eVal);
+  document.getElementById('neracaTgl').innerText='Dicetak: '+new Date().toLocaleString('id-ID');
+  var bal=document.getElementById('nBalanceInfo');
+  if(totalD===totalK){ bal.style.background='#dcfce7'; bal.style.color='#15803d'; bal.innerText='✅ BALANCE - Debit = Kredit'; }
+  else{ bal.style.background='#fee2e2'; bal.style.color='#dc2626'; bal.innerText='⚠️ TIDAK BALANCE - Selisih '+fmt(Math.abs(totalD-totalK)); }
+}
 function cetakNeraca(){
   rNeraca();
   var rows=document.getElementById('tbNeracaSaldo').innerHTML;
@@ -608,10 +701,11 @@ loadFirebaseScript();
   get(dbRef).then(function(snap){
     var d = snap.val();
     if(d && d.master){
-      window.master=d.master||[]; window.stok=d.stok||{}; window.beli=d.beli||[]; window.jual=d.jual||[]; window.inv=d.inv||[]; window.sj=d.sj||[]; window.pengeluaran = d.pengeluaran || d.peng || window.pengeluaran || [];
+      window.master=d.master||[]; window.stok=d.stok||{}; window.aset=d.aset||[]; aset = window.aset; window.beli=d.beli||[]; window.jual=d.jual||[]; window.inv=d.inv||[]; window.sj=d.sj||[]; window.pengeluaran = d.pengeluaran || d.peng || window.pengeluaran || [];
 window.peng = window.pengeluaran;
       try{ localStorage.setItem('mega_v16', JSON.stringify(d)); }catch(e){}
       if(typeof window.refreshAll==='function') window.refreshAll();
+      if(typeof rAsset==='function') rAsset();
       console.log('✅ Data dari Firebase dimuat');
     } else {
       console.log('Firebase kosong, upload data lokal...');
@@ -620,17 +714,39 @@ window.peng = window.pengeluaran;
   }).catch(function(e){ console.log('Gagal baca Firebase:', e.message); });
 
   onValue(dbRef, function(snap){
-    var d = snap.val();
-    if(d && d.lastUpdate){
-      var lokal = {};
-      try{ lokal = JSON.parse(localStorage.getItem('mega_v16')||'{}'); }catch(e){}
-      if(d.lastUpdate !== lokal.lastUpdate){
-        window.master=d.master||[]; window.stok=d.stok||{}; window.beli=d.beli||[]; window.jual=d.jual||[]; window.inv=d.inv||[]; window.sj=d.sj||[]; window.peng=d.peng||d.pengeluaran||[]; window.pengeluaran=window.peng; window.hutang=d.hutang||d.hutangBeli||[]; window.hutangBeli=window.hutang;
-        try{ localStorage.setItem('mega_v16', JSON.stringify(d)); }catch(e){}
-        if(typeof window.refreshAll==='function') window.refreshAll();
+  var d = snap.val();
+  if(d && d.lastUpdate){
+    var lokal = {};
+    try{ lokal = JSON.parse(localStorage.getItem('mega_v16')||'{}'); }catch(e){}
+    if(!window._sudahLoadFirebase || d.lastUpdate !== lokal.lastUpdate){
+    window._sudahLoadFirebase = true;
+      window.master=d.master||[]; window.stok=d.stok||{}; window.aset=d.aset||[]; aset = window.aset; window.beli=d.beli||[]; window.jual=d.jual||[]; window.inv=d.inv||[]; window.sj=d.sj||[]; window.peng=d.peng||d.pengeluaran||[]; window.pengeluaran=window.peng; window.hutang=d.hutang||d.hutangBeli||[]; window.hutangBeli=window.hutang;
+
+      // LOAD MODAL & HUTANG BANK DARI FIREBASE
+      var _m = (d.modal!==undefined?d.modal:(d.nModal!==undefined?d.nModal:null));
+      var _h = (d.hutangBank!==undefined?d.hutangBank:(d.nHutangBank!==undefined?d.nHutangBank:null));
+            if(_m!==null && _m!==undefined){
+        try{
+          if(typeof nModal!=='undefined' && nModal) nModal.value=_m;
+          if(document.getElementById('nModal')) document.getElementById('nModal').value=_m;
+          window._lastModal = _m;
+        }catch(e){}
       }
+      if(_h!==null && _h!==undefined){
+        try{
+          if(typeof nHutangBank!=='undefined' && nHutangBank) nHutangBank.value=_h;
+          if(document.getElementById('nHutangBank')) document.getElementById('nHutangBank').value=_h;
+          window._lastHutangBank = _h;
+        }catch(e){}
+      }
+
+      try{ localStorage.setItem('mega_v16', JSON.stringify(d)); }catch(e){}
+      if(typeof window.refreshAll==='function') window.refreshAll();
+      if(typeof rAsset==='function') rAsset();
+      if(typeof rNeraca==='function') rNeraca();
     }
-  });
+  }
+});
 </script>
 <script>
 // ===== KUNCI SANDI UNTUK TOMBOL BERBAHAYA =====
