@@ -86,8 +86,49 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f8fafc;p
 var FB_DB=null;
 var firebaseConfig={apiKey:"AIzaSyD6LcXNYYYT8hj123WG3rY2bP8h__Hd-Fg",authDomain:"mega-motor-2026.firebaseapp.com",databaseURL:"https://mega-motor-2026-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"mega-motor-2026",storageBucket:"mega-motor-2026.firebasestorage.app",messagingSenderId:"1053130109472",appId:"1:1053130109472:web:72516b48770bf1ebe18245"};
 function tryFirebase(){
-  if(typeof firebase==='undefined'){ document.getElementById('syncStatus').innerText='● Mode Offline - tersimpan di laptop ini (Firebase diblokir proxy, menu tetap jalan)'; return; }
-  try{ firebase.initializeApp(firebaseConfig); FB_DB=firebase.database(); document.getElementById('syncStatus').innerText='● Online Firebase - tersimpan'; document.getElementById('lastSync').innerText='Sync: '+new Date().toLocaleTimeString('id-ID'); FB_DB.ref('toko/cibadak').on('value',function(s){ var d=s.val(); if(!d) return; if(d.master) master=d.master; if(d.stok) stok=d.stok; if(d.jual) jual=d.jual; if(d.inv) inv=d.inv; if(d.sj) sj=d.sj; if(d.beli) beli=d.beli; if(d.pengeluaran) pengeluaran=d.pengeluaran; persistLocal(); refreshAll(); }); }catch(e){ FB_DB=null; }
+  var el = document.getElementById('syncStatus');
+  function setSync(txt, bg, color){
+    if(!el) return;
+    el.innerText = txt;
+    el.style.background = bg;
+    el.style.color = color;
+    el.style.padding = '6px 10px';
+    el.style.borderRadius = '6px';
+  }
+  window.setSyncStatus = setSync;
+
+  if(typeof firebase=='undefined'){
+    setSync('● Mode Offline - tersimpan di laptop ini (Firebase diblokir proxy, menu tetap jalan)', '#fee2e2', '#dc2626');
+    return;
+  }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    FB_DB = firebase.database();
+    setSync('● Menghubungkan ke Firebase...', '#dbeafe', '#1e40af');
+
+    // INI YANG BIKIN STATUS ASLI - cek koneksi beneran ke Firebase
+    FB_DB.ref('.info/connected').on('value', function(snap){
+      if(snap.val() === true){
+        // Cek juga internet browser
+        if(!navigator.onLine){
+          setSync('● Offline - Data Lokal Saja', '#fee2e2', '#dc2626');
+        } else {
+          setSync('● Online Firebase - tersimpan', '#dcfce7', '#15803d');
+          var ls = document.getElementById('lastSync');
+          if(ls) ls.innerText = 'Sync: ' + new Date().toLocaleTimeString('id-ID');
+        }
+      } else {
+        setSync('● Offline Firebase - Belum Sync, data di laptop saja', '#fef3c7', '#92400e');
+      }
+    });
+
+    // Kalau WiFi mati / hidup
+    window.addEventListener('online', function(){ setSync('● Menghubungkan ke Firebase...', '#dbeafe', '#1e40af'); });
+    window.addEventListener('offline', function(){ setSync('● Offline - Data Lokal Saja', '#fee2e2', '#dc2626'); });
+
+  }catch(e){
+    setSync('● Mode Offline - tersimpan di laptop ini (' + e.message + ')', '#fee2e2', '#dc2626');
+  }
 }
 function loadFirebaseScript(){
   var s=document.createElement('script'); s.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
@@ -112,6 +153,7 @@ function fmtTgl(iso){ if(!iso) return ""; var p=iso.split('-'); return p.length=
 function persistLocal(){ try{ localStorage.setItem('mega_kode_master',JSON.stringify(master)); localStorage.setItem('mega_kode_stok',JSON.stringify(stok)); localStorage.setItem('mega_kode_jual',JSON.stringify(jual)); localStorage.setItem('mega_kode_inv',JSON.stringify(inv)); localStorage.setItem('mega_kode_sj',JSON.stringify(sj)); localStorage.setItem('mega_pembelian',JSON.stringify(beli)); localStorage.setItem('mega_pengeluaran',JSON.stringify(pengeluaran)); }catch(e){} }
 function save(){
   window.pengeluaran = window.pengeluaran||window.peng||[]; window.peng = window.pengeluaran;
+  if(window.setSyncStatus) window.setSyncStatus('● Menyimpan...', '#dbeafe', '#1e40af');
   // Ambil Modal & Hutang Bank dari input Neraca, biar ikut ke-sync
   var _modalVal = (typeof window._lastModal !== 'undefined' ? window._lastModal : 0);
 var _hutangBankVal = (typeof window._lastHutangBank !== 'undefined' ? window._lastHutangBank : 0);
@@ -143,13 +185,18 @@ try{
     lastUpdate: Date.now()
   };
   try{ localStorage.setItem('mega_v16', JSON.stringify(data)); }catch(e){}
-  if(window.fbRef && window.fbSet){
-    window.fbSet(window.fbRef, data).then(function(){
-      console.log('✔ Tersimpan ke Firebase');
-      var el=document.getElementById('lastSync');
-      if(el) el.innerText='Sync: '+new Date().toLocaleTimeString('id-ID');
-    }).catch(function(e){ console.log('Gagal Firebase:', e.message) });
-  }
+if(window.fbRef && window.fbSet){
+  if(window.setSyncStatus) window.setSyncStatus('● Menyimpan...', '#dbeafe', '#1e40af');
+  window.fbSet(window.fbRef, data).then(function(){
+    console.log('✔ Tersimpan ke Firebase');
+    if(window.setSyncStatus) window.setSyncStatus('● Online Firebase - tersimpan', '#dcfce7', '#15803d');
+    var el=document.getElementById('lastSync');
+    if(el) el.innerText='Sync: '+new Date().toLocaleTimeString('id-ID');
+  }).catch(function(e){
+    console.log('Gagal Firebase:', e.message);
+    if(window.setSyncStatus) window.setSyncStatus('● Gagal Sync - Data Lokal Saja (' + e.message + ')', '#fee2e2', '#dc2626');
+  });
+}
 }
 window.save = save;
 // ===== IMPORT EXCEL V21 - SEPERTI V1, AUTO SYNC =====
